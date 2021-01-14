@@ -104,6 +104,7 @@ z_score_1.5 <- z_score_matrix
 z_score_2 <- z_score_matrix
 z_score_3 <- z_score_matrix
 z_score_10 <- z_score_matrix
+z_score_50 <- z_score_matrix
 # Cutoff |temp|> 1.5
 z_score_1.5[z_score_1.5 >= 1.5 | z_score_1.5 <= -1.5] <- 1
 z_score_1.5[z_score_1.5 != 1] <- 0
@@ -116,17 +117,20 @@ z_score_3[z_score_3 != 1] <- 0
 # Cutoff |temp|> 10
 z_score_10[z_score_10 >= 10 | z_score_10 <= -10] <- 1
 z_score_10[z_score_10 != 1] <- 0
+# Cutoff |temp|> 50
+z_score_50[z_score_50 >= 50 | z_score_50 <= -50] <- 1
+z_score_50[z_score_50 != 1] <- 0
 
-cutoff_list <- c("±1.5", "±1.5", "±2", "±2", "±3", "±3","±10.0", "±10.0")
+cutoff_list <- c("±1.5", "±1.5", "±2", "±2", "±3", "±3","±10.0", "±10.0","±50.0", "±50.0")
 z_score_cutoff_comparison <- data.frame(
-  Type = c("DE", "NDE", "DE", "NDE", "DE", "NDE", "DE", "NDE"),
+  Type = c("DE", "NDE", "DE", "NDE", "DE", "NDE", "DE", "NDE", "DE", "NDE"),
   Z_score_cutoff = factor(cutoff_list,levels = unique(cutoff_list)),
   Genes = c(
     table(z_score_1.5)["1"], table(z_score_1.5)["0"],
     table(z_score_2)["1"], table(z_score_2)["0"],
     table(z_score_3)["1"], table(z_score_3)["0"],
-    table(z_score_10)["1"], table(z_score_10)["0"]
-    
+    table(z_score_10)["1"], table(z_score_10)["0"],
+    table(z_score_50)["1"], table(z_score_50)["0"]
   )
 )
 
@@ -134,10 +138,10 @@ ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_cutoff, y = Genes, fill
   geom_bar(stat = "identity", position = position_dodge()) +
   scale_fill_brewer(palette = "Paired") +
   geom_text(aes(label = Genes), vjust = 1.6, color = "black", position = position_dodge(0.9), size = 5) +
-  labs(title = "COVID19 versus Healthy lung biopsy", subtitle = "|Z_score| > 1.5, |Z_score| > 2 and |Z_score| > 3 ") +
+  labs(title = "COVID19 versus Healthy lung biopsy", subtitle = "|Z_score| > X") +
   theme(legend.position = "top", plot.title = element_text(size = 20), text = element_text(size = 15))
 
-lung_biopsy_indicator_matrix <- data_frame(rownames(z_score_3), z_score_3) 
+lung_biopsy_indicator_matrix <- data_frame(rownames(z_score_50), z_score_50) 
 
 # Step 5: Prepare biological interaction network ####
 # Prepare biological interaction network
@@ -190,8 +194,26 @@ innes_results_nhbe <- kpm(graph = human_biogrid_network, indicator_matrices = nh
 visualize_result(innes_results_nhbe)
 
 # Step 6.2: downstream analysis with KPM for lung biopsy samples ####
+##GLONE##
 reset_options()
-# Greedy INES run
+kpm_options(
+  execution = "Local",
+  strategy = "GLONE",
+  algorithm = "Greedy",
+  use_range_l = TRUE,
+  l_min = 10,
+  l_step = 5,
+  l_max = 50
+)
+
+# Execute remote run by using a custom graph_file
+glone_results_lung_biopsy <- kpm(graph = human_biogrid_network, indicator_matrices = nhbe_indicator_matrix)
+
+# Visualize the results with shiny
+visualize_result(glone_results_lung_biopsy)
+
+##INES##
+reset_options()
 kpm_options(
   execution = "Local",
   strategy = "INES",
@@ -206,13 +228,22 @@ kpm_options(
   k_max = 10
 )
 
-
 # Execute remote run by using a custom graph_file
 ines_results_lung_biopsy <- kpm(graph = human_biogrid_network, indicator_matrices = lung_biopsy_indicator_matrix)
-
-
 
 # Visualize the results with shiny
 visualize_result(ines_results_lung_biopsy)
 
 reset_options()
+
+
+
+
+
+
+
+
+
+
+
+
