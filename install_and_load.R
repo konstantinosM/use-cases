@@ -10,7 +10,7 @@ if (!requireNamespace("KeyPathwayMineR", quietly = TRUE)) devtools::install_gith
 if (!requireNamespace("simpIntLists", quietly = TRUE)) BiocManager::install("simpIntLists")
 if (!requireNamespace("igraph", quietly = TRUE)) install.packages("igraph")
 if (!requireNamespace("igraph", quietly = TRUE)) install.packages("igraph")
-if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
 
 
@@ -26,7 +26,7 @@ library("DESeq2")
 library("edgeR")
 # Downstream Analysis
 library("KeyPathwayMineR")
-# Visualization
+# Visualization and data management
 library("EnhancedVolcano")
-library("ggplot2")
+library("tidyverse")
 

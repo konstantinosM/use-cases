@@ -53,6 +53,7 @@ dds <- DESeq(dds)
 # Contrast the samples infected with SARS.CoV.2 to the Mock infected samples
 # Important: The order in which the conditions are specified is important
 results <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"))
+
 # Step 3.2: DE analysis: TMM normalization of raw counts using edgeR and creation of z-score matrix ####
 # Save count matrix as dge_list
 dge_list <- DGEList(counts = lung_biopsy_raw_counts[, -1], group = c("HealthyLung", "HealthyLung", "COVID19Lung", "COVID19Lung"))
@@ -66,7 +67,8 @@ keep <- filterByExpr(y = norm_counts, min.count = 2, group = c("HealthyLung", "H
 norm_counts <- norm_counts[keep, ]
 # Compute z-score of case samples
 z_score_matrix <- compute_z_scores(norm_counts, controls = c(1, 2), cases = c(3, 4))
-# Step 4.1: Find cutoffs for genes in NHBE samples ####
+
+# Step 4.1: Find cutoffs for genes in NHBE samples and create Indicator list ####
 # Shrink LFC values
 results <- lfcShrink(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
 # Set cutoff for p_adj and fc
@@ -89,9 +91,46 @@ EnhancedVolcano(results,
   pCutoff = pCutoff,
   ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
   xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
-) + coord_cartesian(xlim = c(-1.5, 3)) +
-  ggplot2::scale_x_continuous(breaks = seq(-2, 3, 1))
-# Step 5: Prepare biological interaction network and indicator matrix for KPM ####
+)
+
+# Prepare indicator matrix
+nhbe_indicator_matrix <- data.frame(names = row.names(NHBE_raw_counts), de = c(0))
+# Set DEGs to 1
+nhbe_indicator_matrix[nhbe_indicator_matrix$names %in% deg_deseq, ][, 2] <- 1
+# Step 4.2: Find cutoffs for genes in lung biopsy samples and create Indicator matrix####
+z_score_1.5 <- z_score_matrix
+z_score_2 <- z_score_matrix
+z_score_3 <- z_score_matrix
+# Cutoff |temp|> 1.5
+z_score_1.5[z_score_1.5 >= 1.5 | z_score_1.5 <= -1.5] <- 1
+z_score_1.5[z_score_1.5 != 1] <- 0
+# Cutoff |temp|> 2
+z_score_2[z_score_2 >= 2 | z_score_2 <= -2] <- 1
+z_score_2[z_score_2 != 1] <- 0
+# Cutoff |temp|> 3
+z_score_3[z_score_3 >= 3 | z_score_3 <= -3] <- 1
+z_score_3[z_score_3 != 1] <- 0
+
+z_score_cutoff_comparison <- data.frame(
+  Type = c("DE", "NDE", "DE", "NDE", "DE", "NDE"),
+  Z_score_cutoff = c("±1.5", "±1.5", "±2", "±2", "±3", "±3"),
+  Genes = c(
+    table(z_score_1.5)[1], table(z_score_1.5)[2],
+    table(z_score_2)[1], table(z_score_2)[2],
+    table(z_score_3)[1], table(z_score_3)[2]
+  )
+)
+
+ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_cutoff, y = Genes, fill = Type)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_fill_brewer(palette = "Paired") +
+  geom_text(aes(label = Genes), vjust = 1.6, color = "black", position = position_dodge(0.9), size = 5) +
+  labs(title = "COVID19 versus Healthy lung biopsy", subtitle = "|Z_score| > 1.5, |Z_score| > 2 and |Z_score| > 3 ") +
+  theme(legend.position = "top", plot.title = element_text(size = 20), text = element_text(size = 15))
+
+lung_biopsy_indicator_matrix <- data_frame(rownames(z_score_3),z_score_3) 
+
+# Step 5: Prepare biological interaction network ####
 # Prepare biological interaction network
 human_biogrid_network <- findInteractionList(organism = "human", idType = "Official")
 # KeyPathwayMineR support two types of input either a sif file or an iGraph object
@@ -106,13 +145,6 @@ edges <- data.frame(from = from, to = to)
 human_biogrid_network <- graph_from_data_frame(d = edges, directed = FALSE)
 # Remove duplicate edges and loops
 human_biogrid_network <- simplify(human_biogrid_network)
-
-
-# Prepare indicator matrix
-nhbe_indicator_matrix <- data.frame(names = row.names(NHBE_raw_counts), de = c(0))
-# Set DEGs to 1
-nhbe_indicator_matrix[nhbe_indicator_matrix$names %in% deg_deseq, ][, 2] <- 1
-
 # Step 6.1: downstream analysis with KPM for NHBE sample #####
 # Greedy GLONE run
 kpm_options(
@@ -153,3 +185,26 @@ saveRDS(innes_results_nhbe, "use_case_results/GEO_SARS_COV_2/innes_results_nhbe.
 
 # Visualize the results with shiny
 visualize_result(innes_results_nhbe)
+
+# Step 6.2: downstream analysis with KPM for lung biopsy samples ####
+reset_options()
+kpm_options(
+  execution = "Local",
+  strategy = "GLONE",
+  algorithm = "Greedy",
+  use_range_l = TRUE,
+  l_min = 10,
+  l_step = 5,
+  l_max = 50
+)
+
+# Execute remote run by using a custom graph_file
+glone_results_lung_biopsy <- kpm(graph = human_biogrid_network, indicator_matrices = lung_biopsy_indicator_matrix)
+
+# Save result object
+saveRDS(glone_results_lung_biopsy, "use_case_results/GEO_SARS_COV_2/glone_results_lung_biopsy.rds")
+
+# Visualize the results with shiny
+visualize_result(glone_results_lung_biopsy)
+
+reset_options()
