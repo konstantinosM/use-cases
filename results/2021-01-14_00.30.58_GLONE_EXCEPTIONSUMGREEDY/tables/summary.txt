@@ -1,0 +1,5 @@
+L1:	[Case exceptions (L): 2, Matrix: /var/folders/_2/x868qphn3013z_5chs1xkl100000gn/T//RtmpeI0v6b/file75cf3b8dfb00.txt]
+Strategy:	GLONE
+Algorithm:	GREEDY
+Program:	KeyPathwayMiner followed by SP of the resulting pathways
+Size of the best result:	62

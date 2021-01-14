@@ -1,0 +1,6 @@
+Gene exceptions (K):	{Min: 1, Max: 20, Step: 5}
+L1:	[Case exceptions (L): {Min: 0, Max: 10, Step: 1}, Matrix: /var/folders/_2/x868qphn3013z_5chs1xkl100000gn/T//Rtmp8SnJsn/file16fe47d302cb.txt]
+Strategy:	INES
+Algorithm:	GREEDY
+Program:	KeyPathwayMiner followed by SP of the resulting pathways
+Size of the best result:	4

@@ -1,31 +1,6 @@
 # SARS-CoV-2 data from GEO
-# Step 0: Install and load required packages ####
-# Install packages
-if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-if (!requireNamespace("DESeq2", quietly = TRUE)) BiocManager::install("DESeq2")
-if (!requireNamespace("edgeR", quietly = TRUE)) BiocManager::install("edgeR")
-if (!requireNamespace("GEOquery", quietly = TRUE)) BiocManager::install("GEOquery")
-if (!requireNamespace("EnhancedVolcano", quietly = TRUE)) BiocManager::install("EnhancedVolcano")
-if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-if (!requireNamespace("KeyPathwayMineR", quietly = TRUE)) devtools::install_github("baumbachlab/keypathwayminer-R", build_vignettes = TRUE)
-if (!requireNamespace("simpIntLists", quietly = TRUE)) BiocManager::install("simpIntLists")
-if (!requireNamespace("igraph", quietly = TRUE)) install.packages("igraph")
-
-# Load libraries
-# Gene expression datasets
-library("GEOquery")
-# BioGRID interactions
-library("simpIntLists")
-# To save the biological interactions
-library("igraph")
-# Differential expression analysis
-library("DESeq2")
-library("edgeR")
-# Downstream Analysis
-library("KeyPathwayMineR")
-# Visualization
-library("EnhancedVolcano")
-
+# Install and load R packages
+source("install_and_load.R")
 # Step 1: Fetch records from GEO ####
 # In this case a GEO series record is fetched
 gse_147507 <- getGEO("GSE147507", GSEMatrix = TRUE)
@@ -94,32 +69,29 @@ z_score_matrix <- compute_z_scores(norm_counts, controls = c(1, 2), cases = c(3,
 # Step 4.1: Find cutoffs for genes in NHBE samples ####
 # Shrink LFC values
 results <- lfcShrink(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
-# Visualize with volcano plots to determine good cutoffss
-fc_cutoff <- 1
-pCutoff <- 0.0001
-# TODO automatization
-for (variable in vector) {
-  EnhancedVolcano(results,
-    lab = rownames(results),
-    title = "SARS-CoV-2 versus Mock infected NHBE cells",
-    subtitle = paste("P_ADJ ≤,", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
-    x = "log2FoldChange",
-    y = "padj",
-    FCcutoff = fc_cutoff,
-    pCutoff = pCutoff,
-    ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
-    xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")")
-  )
-}
-
+# Set cutoff for p_adj and fc
+fc_cutoff <- 0.5
+pCutoff <- 0.05
 # Exrtact results for specific log2FoldChange and p_adj cutoff
-# Get genes that have a p_adj <= 0.0001
 p_adjusted_vals <- results$padj <= pCutoff
 p_adjusted_vals[is.na(p_adjusted_vals)] <- FALSE
-# Get differentially expressed genes with
 deg_deseq <- rownames(results[(results$log2FoldChange <= -fc_cutoff | results$log2FoldChange >= fc_cutoff) & p_adjusted_vals, ])
 
-# Step 5: Prepare biological interaction network ####
+# Plot volcano plot to asses good cutoffs
+EnhancedVolcano(results,
+  lab = rownames(results),
+  title = "SARS-CoV-2 versus Mock infected NHBE cells",
+  subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
+  caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
+  x = "log2FoldChange",
+  y = "padj",
+  FCcutoff = fc_cutoff,
+  pCutoff = pCutoff,
+  ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
+  xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
+) + coord_cartesian(xlim = c(-1.5, 3)) +
+  ggplot2::scale_x_continuous(breaks = seq(-2, 3, 1))
+# Step 5: Prepare biological interaction network and indicator matrix for KPM ####
 # Prepare biological interaction network
 human_biogrid_network <- findInteractionList(organism = "human", idType = "Official")
 # KeyPathwayMineR support two types of input either a sif file or an iGraph object
@@ -129,26 +101,55 @@ to <- c()
 for (entry in human_biogrid_network) {
   from <- c(from, rep(entry$name, length(entry$interactors)))
   to <- c(to, entry$interactors)
-} 
-edges <-data.frame(from = from, to = to)
-human_biogrid_network <- graph_from_data_frame(d = edges, directed=FALSE)
+}
+edges <- data.frame(from = from, to = to)
+human_biogrid_network <- graph_from_data_frame(d = edges, directed = FALSE)
 # Remove duplicate edges and loops
 human_biogrid_network <- simplify(human_biogrid_network)
-# Step 5: downstream analysis with KPM #####
+
+
 # Prepare indicator matrix
 nhbe_indicator_matrix <- data.frame(names = row.names(NHBE_raw_counts), de = c(0))
 # Set DEGs to 1
 nhbe_indicator_matrix[nhbe_indicator_matrix$names %in% deg_deseq, ][, 2] <- 1
-# Set kpm options
+
+# Step 6.1: downstream analysis with KPM for NHBE sample #####
+# Greedy GLONE run
+kpm_options(
+  execution = "Local",
+  strategy = "GLONE",
+  algorithm = "Greedy",
+  use_range_l = TRUE,
+  l_min = 10,
+  l_step = 5,
+  l_max = 50
+)
+
+# Execute remote run by using a custom graph_file
+glone_results_nhbe <- kpm(graph = human_biogrid_network, indicator_matrices = nhbe_indicator_matrix)
+
+# Save result object
+saveRDS(glone_results_nhbe, "use_case_results/GEO_SARS_COV_2/glone_results_nhbe.rds")
+
+# Visualize the results with shiny
+visualize_result(glone_results_nhbe)
+
+reset_options()
+# Greedy INES run
 kpm_options(
   execution = "Local",
   strategy = "INES",
   algorithm = "Greedy",
-  l_min = 20,
-  k_min = 5
+  use_range_k = TRUE,
+  l_min = 0,
+  k_min = 5,
+  k_step = 10,
+  k_max = 50
 )
-# Execute remote run by using a custom graph_file
-local_example_1 <- kpm(graph_file = sample_network, indicator_matrices = huntington_disease_up)
+
+innes_results_nhbe <- kpm(graph = human_biogrid_network, indicator_matrices = nhbe_indicator_matrix)
+
+saveRDS(innes_results_nhbe, "use_case_results/GEO_SARS_COV_2/innes_results_nhbe.rds")
 
 # Visualize the results with shiny
-visualize_result(local_example_1)
+visualize_result(innes_results_nhbe)
