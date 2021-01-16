@@ -1,3 +1,12 @@
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("TCGAutils")
+BiocManager::install("TCGAbiolinks")
+
+library("TCGAutils")
+library("TCGAbiolinks")
+
+
 # For this use case we will use the TCGA-PRAD query which cointaint data from Prostate Adenocarcinoma patients
 # Step1: Create query for gene expression and methylation data quantified with HTSeq from Prostate Adenocarcinoma patients ####
 query_TCGA_counts <- GDCquery(
@@ -52,16 +61,10 @@ solid_tissue_normal_methylation <- solid_tissue_normal_methylation[solid_tissue_
 # The primary_tumor_methylation query has one additional count with FFPE == TRUE which has to be removed
 primary_tumor_methylation <- filter(primary_tumor_methylation, is_ffpe != TRUE)
 
+# Step 4: Download data ####
+GDCdownload(query = primary_tumor_counts)
+GDCdownload(query = solid_tissue_normal_counts)
 
-
-
-
-
-
-
-
-
-
-
+a<- UUIDtoBarcode(id_vector = primary_tumor_counts$id, from_type = "file_id")
 
 
