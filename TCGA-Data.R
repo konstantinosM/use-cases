@@ -1,25 +1,38 @@
-if (!require("BiocManager")) {
-  install.packages("BiocManager")
-}
-BiocManager::install("GenomicDataCommons")
+# For this use case we will use the TCGA-PRAD query which cointaint data from Prostate Adenocarcinoma patients
+# Step1: Create query for gene expression and methylation data quantified with HTSeq from Prostate Adenocarcinoma patients ####
+query_TCGA_counts <- GDCquery(
+  project = "TCGA-PRAD",
+  data.category = "Transcriptome Profiling",
+  experimental.strategy = "RNA-Seq",
+  workflow.type = "HTSeq - Counts"
+)
 
-library(GenomicDataCommons)
+# Get results of the query
+prad_results_counts <- getResults(query_TCGA_counts)
 
-# Create manifest file with information on raw data to be used
-# Filter gene expression data quantified with HTSeq from Prostate Adenocarcinoma patients
-counts = files() %>%
-  filter( cases.project.project_id == 'TCGA-PRAD') %>% 
-  filter( type == 'gene_expression' ) %>%  
-  filter( analysis.workflow_type == 'HTSeq - Counts')  %>%
-  manifest()
+# Query methylation data quantified with RNA-Seq from Prostate Adenocarcinoma patients
+query_TCGA_methylation <- GDCquery(
+  project = "TCGA-PRAD",
+  data.category = "DNA Methylation"
+)
 
-# Get the first 25 cased ids
-cases <- ge_manifest$id[1:25]
+# Get results of the query
+prad_results_methylation <- getResults(query_TCGA_methylation)
+# Step 2: Filtering ####
+# Remove cases which are not in both queries
+keep_counts <- prad_results_counts$cases.submitter_id %in% prad_results_methylation$cases.submitter_id
+keep_methylation <- prad_results_methylation$cases.submitter_id %in% prad_results_counts$cases.submitter_id
 
-# Get counts for the first 25 cases
-gdcdata(uuids = cases)
+prad_results_counts <- prad_results_counts[keep_counts, ]
+prad_results_methylation <- prad_results_methylation[keep_methylation, ]
 
-head(ge_manifest)
+# Now we check if all the cases have the same amount of entries
+equal <- table(prad_results_counts$cases.submitter_id) == table(prad_results_methylation$cases.submitter_id)
 
+# And we keep all the entries that have the same amount of cases
+keep <- row.names(equal)[equal == TRUE]
+prad_results_counts <- prad_results_counts[prad_results_counts$cases.submitter_id %in% keep, ]
+prad_results_methylation <- prad_results_methylation[prad_results_methylation$cases.submitter_id %in% keep, ]
 
-testin <- as.data.frame.matrix(read.delim(header = FALSE, "/Users/konstantinos/Library/Caches/GenomicDataCommons/10a24f34-ce3b-43c3-8646-6042c2b0e178/ea1ce00b-00f4-4194-97df-6a64227e7bdc.htseq.counts.gz"), )
+k <- data.frame(names = c("b", "a", "c", "z"), numbers = c(1, 2, 3, 4))
+keeper <- c(a = TRUE, b = FALSE, c = FALSE, z = TRUE)
