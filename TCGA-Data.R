@@ -34,6 +34,7 @@ keep <- row.names(equal)[equal == TRUE]
 prad_results_counts <- prad_results_counts[prad_results_counts$cases.submitter_id %in% keep, ]
 prad_results_methylation <- prad_results_methylation[prad_results_methylation$cases.submitter_id %in% keep, ]
 
+# Step3 : Select data for analysis ####
 # For our analysis we will use 25 Primary solid Tumor vs. 25 Solid Tissue Normal
 # Primary tumor counts
 primary_tumor_counts <- filter(prad_results_counts, sample_type == "Primary Tumor")[1:25, ]
