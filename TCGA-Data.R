@@ -34,5 +34,33 @@ keep <- row.names(equal)[equal == TRUE]
 prad_results_counts <- prad_results_counts[prad_results_counts$cases.submitter_id %in% keep, ]
 prad_results_methylation <- prad_results_methylation[prad_results_methylation$cases.submitter_id %in% keep, ]
 
-k <- data.frame(names = c("b", "a", "c", "z"), numbers = c(1, 2, 3, 4))
-keeper <- c(a = TRUE, b = FALSE, c = FALSE, z = TRUE)
+# For our analysis we will use 25 Primary solid Tumor vs. 25 Solid Tissue Normal
+# Primary tumor counts
+primary_tumor_counts <- filter(prad_results_counts, sample_type == "Primary Tumor")[1:25, ]
+# Solid tissue normal counts
+solid_tissue_normal_counts <- filter(prad_results_counts, sample_type == "Solid Tissue Normal")[1:25, ]
+# For the same cases fetch also methylation data
+# Primary tumor methylation
+primary_tumor_methylation <- filter(prad_results_methylation, sample_type == "Primary Tumor")
+primary_tumor_methylation <- primary_tumor_methylation[primary_tumor_methylation$cases.submitter_id %in% primary_tumor_counts$cases.submitter_id, ]
+
+# Solid tissues methylation
+solid_tissue_normal_methylation <- filter(prad_results_methylation, sample_type == "Solid Tissue Normal")
+solid_tissue_normal_methylation <- solid_tissue_normal_methylation[solid_tissue_normal_methylation$cases.submitter_id %in% solid_tissue_normal_counts$cases.submitter_id, ]
+
+# The primary_tumor_methylation query has one additional count with FFPE == TRUE which has to be removed
+primary_tumor_methylation <- filter(primary_tumor_methylation, is_ffpe != TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
