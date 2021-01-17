@@ -40,3 +40,8 @@ vignettes/*.pdf
 
 # Standalone result files
 results/
+
+# Raw data
+GDCdata/
+GSE147507/
+
