@@ -1,7 +1,7 @@
 if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install("TCGAutils")
-BiocManager::install("TCGAbiolinks")
+BiocManager::install("TCGAutils")
 
 library("TCGAutils")
 library("TCGAbiolinks")
@@ -62,9 +62,27 @@ solid_tissue_normal_methylation <- solid_tissue_normal_methylation[solid_tissue_
 primary_tumor_methylation <- filter(primary_tumor_methylation, is_ffpe != TRUE)
 
 # Step 4: Download data ####
-GDCdownload(query = primary_tumor_counts)
-GDCdownload(query = solid_tissue_normal_counts)
+query_primary_tumor_counts <- GDCquery(
+  project = "TCGA-PRAD",
+  data.category = "Transcriptome Profiling",
+  experimental.strategy = "RNA-Seq",
+  workflow.type = "HTSeq - Counts",
+  barcode = UUIDtoBarcode(id_vector = primary_tumor_counts$id, from_type = "file_id")$associated_entities.entity_submitter_id)
+GDCdownload(query = query_primary_tumor_counts)
 
-a<- UUIDtoBarcode(id_vector = primary_tumor_counts$id, from_type = "file_id")
+query_solid_tissue_normal_counts <- GDCquery(
+  project = "TCGA-PRAD",
+  data.category = "Transcriptome Profiling",
+  experimental.strategy = "RNA-Seq",
+  workflow.type = "HTSeq - Counts",
+  barcode = UUIDtoBarcode(id_vector = solid_tissue_normal_counts$id, from_type = "file_id")$associated_entities.entity_submitter_id)
+GDCdownload(query = query_solid_tissue_normal_counts)
+
+query_primary_tumor_methylation <- GDCquery(
+  project = "TCGA-PRAD",
+  data.category = "DNA Methylation",
+  barcode = UUIDtoBarcode(id_vector = primary_tumor_methylation$id, from_type = "file_id")$associated_entities.entity_submitter_id 
+)
+GDCdownload(query = query_primary_tumor_methylation)
 
 
