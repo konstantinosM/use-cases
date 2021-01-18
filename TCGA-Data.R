@@ -2,9 +2,12 @@ if (!require("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install("TCGAutils")
 BiocManager::install("TCGAutils")
+BiocManager::install("curatedTCGAData")
 
 library("TCGAutils")
 library("TCGAbiolinks")
+library("curatedTCGAData")
+library("tidyverse")
 
 
 # For this use case we will use the TCGA-PRAD query which cointaint data from Prostate Adenocarcinoma patients
@@ -84,5 +87,36 @@ query_primary_tumor_methylation <- GDCquery(
   barcode = UUIDtoBarcode(id_vector = primary_tumor_methylation$id, from_type = "file_id")$associated_entities.entity_submitter_id 
 )
 GDCdownload(query = query_primary_tumor_methylation)
+
+query_solid_tissue_normal_methylation <- GDCquery(
+  project = "TCGA-PRAD",
+  data.category = "DNA Methylation",
+  barcode = UUIDtoBarcode(id_vector = solid_tissue_normal_methylation$id, from_type = "file_id")$associated_entities.entity_submitter_id 
+)
+GDCdownload(query = query_solid_tissue_normal_methylation)
+# Step 5: Load data into R and prepare count matrices####
+# Count data
+# Case
+data_primary_tumor_counts <- GDCprepare(query_primary_tumor_counts,)
+data_primary_tumor_counts <- assay(data_primary_tumor_counts)
+# Control
+data_solid_tissue_normal_counts <- GDCprepare(query_solid_tissue_normal_counts)
+data_solid_tissue_normal_counts <- assay(data_solid_tissue_normal_counts)
+# Merge in one matrix controls vs. disease
+counts <- merge(x = data_solid_tissue_normal_counts, y = data_primary_tumor_counts, by = "row.names")%>%
+          column_to_rownames(var = "Row.names")
+#Methylation data 
+# Case
+data_primary_tumor_methylation <- GDCprepare(query_primary_tumor_methylation)
+data_primary_tumor_methylation <- assay(data_primary_tumor_methylation)
+# Control
+data_solid_tissue_normal_methylation <- GDCprepare(query_solid_tissue_normal_methylation)
+data_solid_tissue_normal_methylation <- assay(data_solid_tissue_normal_methylation)
+# Merge controls vs. disease
+methylation <- merge(x = data_solid_tissue_normal_methylation, y = data_primary_tumor_methylation, by = "row.names")%>%
+  column_to_rownames(var = "Row.names")
+
+
+
 
 

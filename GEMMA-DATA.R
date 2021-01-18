@@ -1,7 +1,7 @@
 devtools::install_github('PavlidisLab/gemmaAPI.R')
 library("gemmaAPI")
 
-data <- datasetInfo('GSE1297', request='data', filter = FALSE)
+differential <- datasetInfo('GSE1297', request='differential')
 
-design <- datasetInfo('GSE1297', request='design')
+degs <- datasetInfo('GSE1297', request='data',filter = FALSE)
 
