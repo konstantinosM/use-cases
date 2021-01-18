@@ -1,5 +1,6 @@
-if (!require("BiocManager", quietly = TRUE))
+if (!require("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
+}
 BiocManager::install("TCGAutils")
 BiocManager::install("TCGAutils")
 BiocManager::install("curatedTCGAData")
@@ -29,22 +30,22 @@ query_TCGA_methylation <- GDCquery(
 )
 
 # Get results of the query
-prad_results_methylation <- getResults(query_TCGA_methylation)
-# Step 2: Filtering ####
-# Remove cases which are not in both queries
-keep_counts <- prad_results_counts$cases.submitter_id %in% prad_results_methylation$cases.submitter_id
-keep_methylation <- prad_results_methylation$cases.submitter_id %in% prad_results_counts$cases.submitter_id
-
-prad_results_counts <- prad_results_counts[keep_counts, ]
-prad_results_methylation <- prad_results_methylation[keep_methylation, ]
-
-# Now we check if all the cases have the same amount of entries
-equal <- table(prad_results_counts$cases.submitter_id) == table(prad_results_methylation$cases.submitter_id)
-
-# And we keep all the entries that have the same amount of cases
-keep <- row.names(equal)[equal == TRUE]
-prad_results_counts <- prad_results_counts[prad_results_counts$cases.submitter_id %in% keep, ]
-prad_results_methylation <- prad_results_methylation[prad_results_methylation$cases.submitter_id %in% keep, ]
+# prad_results_methylation <- getResults(query_TCGA_methylation)
+# # Step 2: Filtering ####
+# # Remove cases which are not in both queries
+# keep_counts <- prad_results_counts$cases.submitter_id %in% prad_results_methylation$cases.submitter_id
+# keep_methylation <- prad_results_methylation$cases.submitter_id %in% prad_results_counts$cases.submitter_id
+# 
+# prad_results_counts <- prad_results_counts[keep_counts, ]
+# prad_results_methylation <- prad_results_methylation[keep_methylation, ]
+# 
+# # Now we check if all the cases have the same amount of entries
+# equal <- table(prad_results_counts$cases.submitter_id) == table(prad_results_methylation$cases.submitter_id)
+# 
+# # And we keep all the entries that have the same amount of cases
+# keep <- row.names(equal)[equal == TRUE]
+# prad_results_counts <- prad_results_counts[prad_results_counts$cases.submitter_id %in% keep, ]
+# prad_results_methylation <- prad_results_methylation[prad_results_methylation$cases.submitter_id %in% keep, ]
 
 # Step3 : Select data for analysis ####
 # For our analysis we will use 25 Primary solid Tumor vs. 25 Solid Tissue Normal
@@ -70,7 +71,8 @@ query_primary_tumor_counts <- GDCquery(
   data.category = "Transcriptome Profiling",
   experimental.strategy = "RNA-Seq",
   workflow.type = "HTSeq - Counts",
-  barcode = UUIDtoBarcode(id_vector = primary_tumor_counts$id, from_type = "file_id")$associated_entities.entity_submitter_id)
+  barcode = UUIDtoBarcode(id_vector = primary_tumor_counts$id, from_type = "file_id")$associated_entities.entity_submitter_id
+)
 GDCdownload(query = query_primary_tumor_counts)
 
 query_solid_tissue_normal_counts <- GDCquery(
@@ -78,34 +80,35 @@ query_solid_tissue_normal_counts <- GDCquery(
   data.category = "Transcriptome Profiling",
   experimental.strategy = "RNA-Seq",
   workflow.type = "HTSeq - Counts",
-  barcode = UUIDtoBarcode(id_vector = solid_tissue_normal_counts$id, from_type = "file_id")$associated_entities.entity_submitter_id)
+  barcode = UUIDtoBarcode(id_vector = solid_tissue_normal_counts$id, from_type = "file_id")$associated_entities.entity_submitter_id
+)
 GDCdownload(query = query_solid_tissue_normal_counts)
 
 query_primary_tumor_methylation <- GDCquery(
   project = "TCGA-PRAD",
   data.category = "DNA Methylation",
-  barcode = UUIDtoBarcode(id_vector = primary_tumor_methylation$id, from_type = "file_id")$associated_entities.entity_submitter_id 
+  barcode = UUIDtoBarcode(id_vector = primary_tumor_methylation$id, from_type = "file_id")$associated_entities.entity_submitter_id
 )
 GDCdownload(query = query_primary_tumor_methylation)
 
 query_solid_tissue_normal_methylation <- GDCquery(
   project = "TCGA-PRAD",
   data.category = "DNA Methylation",
-  barcode = UUIDtoBarcode(id_vector = solid_tissue_normal_methylation$id, from_type = "file_id")$associated_entities.entity_submitter_id 
+  barcode = UUIDtoBarcode(id_vector = solid_tissue_normal_methylation$id, from_type = "file_id")$associated_entities.entity_submitter_id
 )
 GDCdownload(query = query_solid_tissue_normal_methylation)
 # Step 5: Load data into R and prepare count matrices####
 # Count data
 # Case
-data_primary_tumor_counts <- GDCprepare(query_primary_tumor_counts,)
+data_primary_tumor_counts <- GDCprepare(query_primary_tumor_counts, )
 data_primary_tumor_counts <- assay(data_primary_tumor_counts)
 # Control
 data_solid_tissue_normal_counts <- GDCprepare(query_solid_tissue_normal_counts)
 data_solid_tissue_normal_counts <- assay(data_solid_tissue_normal_counts)
 # Merge in one matrix controls vs. disease
-counts <- merge(x = data_solid_tissue_normal_counts, y = data_primary_tumor_counts, by = "row.names")%>%
-          column_to_rownames(var = "Row.names")
-#Methylation data 
+counts <- merge(x = data_solid_tissue_normal_counts, y = data_primary_tumor_counts, by = "row.names") %>%
+  column_to_rownames(var = "Row.names")
+# Methylation data
 # Case
 data_primary_tumor_methylation <- GDCprepare(query_primary_tumor_methylation)
 data_primary_tumor_methylation <- assay(data_primary_tumor_methylation)
@@ -113,10 +116,5 @@ data_primary_tumor_methylation <- assay(data_primary_tumor_methylation)
 data_solid_tissue_normal_methylation <- GDCprepare(query_solid_tissue_normal_methylation)
 data_solid_tissue_normal_methylation <- assay(data_solid_tissue_normal_methylation)
 # Merge controls vs. disease
-methylation <- merge(x = data_solid_tissue_normal_methylation, y = data_primary_tumor_methylation, by = "row.names")%>%
+methylation <- merge(x = data_solid_tissue_normal_methylation, y = data_primary_tumor_methylation, by = "row.names") %>%
   column_to_rownames(var = "Row.names")
-
-
-
-
-
