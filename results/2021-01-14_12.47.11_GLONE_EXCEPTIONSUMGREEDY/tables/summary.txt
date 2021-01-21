@@ -1,5 +1,0 @@
-L1:	[Case exceptions (L): {Min: 1, Max: 15, Step: 1}, Matrix: /var/folders/_2/x868qphn3013z_5chs1xkl100000gn/T//RtmpDV4NJK/filea54411d325c.txt]
-Strategy:	GLONE
-Algorithm:	GREEDY
-Program:	KeyPathwayMiner followed by SP of the resulting pathways
-Size of the best result:	0

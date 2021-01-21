@@ -137,8 +137,8 @@ z_score_cutoff_comparison <- data.frame(
 ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_cutoff, y = Genes, fill = Type)) +
   geom_bar(stat = "identity", position = position_dodge()) +
   scale_fill_brewer(palette = "Paired") +
-  geom_text(aes(label = Genes), vjust = 1.6, color = "black", position = position_dodge(0.9), size = 5) +
-  labs(title = "COVID19 versus Healthy lung biopsy", subtitle = "|Z_score| > X") +
+  geom_text(aes(label = Genes), vjust = 1.35, color = "black", position = position_dodge(0.9), size = 5) +
+  labs(title = "COVID19 versus Healthy lung biopsy", subtitle = "|Z_score| > X", caption = " Considering genes overall 490 primary tumor samlpes.") +
   theme(legend.position = "top", plot.title = element_text(size = 20), text = element_text(size = 15))
 
 lung_biopsy_indicator_matrix <- data_frame(rownames(z_score_50), z_score_50) 
