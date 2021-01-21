@@ -74,7 +74,7 @@ z_score_matrix <- rownames_to_column(data.frame(z_score_matrix))
 string_db <- STRINGdb$new(version = "11",
                           species = 9606, 
                           input_directory = "",
-                          score_threshold = 600
+                          score_threshold = 800
                           )
 
 z_score_matrix <- string_db$map(my_data_frame = z_score_matrix,
@@ -134,3 +134,9 @@ counts_matrix_z_4 <- data.frame(id = z_score_matrix$STRING_id, z_score_4)
 
 # Save count matrix
 saveRDS(counts_matrix_z_4, "use_case_data/gdc_data/data/counts_matrix_z_4.rds")
+
+# Save network
+human_string_network <- string_db$get_graph()
+saveRDS(human_string_network, "use_case_data/gdc_data/graphs/human_string_network_800.rds")
+
+
