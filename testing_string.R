@@ -5,4 +5,5 @@ data(diff_exp_example1)
 
 string_db$map(diff_exp_example1, "gene", removeUnmappedRows = TRUE)
 
-example1_mapped <- string_db$map(diff_exp_example1, "gene", removeUnmappedRows = TRUE )
+example1_mapped <- string_db$map(diff_exp_example1, "gene", removeUnmappedRows = TRUE)
+

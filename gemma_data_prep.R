@@ -24,8 +24,8 @@ diff_exp_data <- diff_exp_data[keep,]
 
 # Step 3: Determine cutoffs ####
 # Set cutoff for p_adj and fc
-fc_cutoff <- 0.5
-pCutoff <- 0.05
+fc_cutoff <- 0.0
+pCutoff <- 0.1
 # Get foldchange and pvals for all conditions and determine  degs
 # Incipient
 incipient_samples <- data.frame(
