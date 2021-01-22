@@ -10,49 +10,21 @@ result <- new("Result", configurations = results, parameters = list(computed_pat
 counts_matrix_z_4 <- readRDS("use_case_data/gdc_data/data/counts_matrix_z_4.rds")
 result <- pathway_statistics(indicator_matrix = counts_matrix_z_4, result = result)
 # Visualize the results with shiny
-visualize_result(result)
+# visualize_result(result)
 
-
-plot_union_network_comparison <- function(result) {
-  configurations <- get_configurations(result)
-  config <- c()
-  numNodes <- c()
-  avgDiffExp <- c()
-  for (configuration in configurations) {
-    pathways <- get_pathways(result_object = result, configuration = configuration)
-    union_network <- pathways@union_network
-    config <- c(config, configuration)
-    numNodes <- c(numNodes, union_network@num_nodes)
-    avgDiffExp <- c(avgDiffExp, union_network@avg_exp)
-  }
-  return(tibble(config=config,numNodes=numNodes,avgDiffExp=avgDiffExp))
-}
-
-
-
-
-
-
-# install.packages("ggplot2")
-# load package and data
-options(scipen = 999) # turn-off scientific notation like 1e+48
-library(ggplot2)
-theme_set(theme_bw()) # pre-set the bw theme.
-data("midwest", package = "ggplot2")
-# midwest <- read.csv("http://goo.gl/G1K41K")  # bkup data source
-
+df <- plot_union_network_comparison(result = result)
+df_select <- df[df$avgDiffExp > 30 & df$numNodes > 15, ]
 # Scatterplot
-gg <- ggplot(midwest, aes(x = area, y = poptotal)) +
-  geom_point(aes(col = state, size = popdensity)) +
-  geom_smooth(method = "loess", se = F) +
-  xlim(c(0, 0.1)) +
-  ylim(c(0, 500000)) +
+ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
+  geom_point(aes(col = config, size = avgDiffExp)) +
+  geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
+  geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0) +
+  scale_x_continuous(breaks = round(seq(0, max(df$numNodes), by = 10), 1)) +
+  scale_y_continuous(breaks = round(seq(0, max(df$avgDiffExp), by = 20), 1)) +
   labs(
-    subtitle = "Area Vs Population",
-    y = "Population",
-    x = "Area",
-    title = "Scatterplot",
-    caption = "Source: midwest"
+    subtitle = "Number of nodes Vs Avg. DE. cases per gene",
+    y = "Average differentialy expressed cases per gene",
+    x = "Nodes in the pathway",
+    title = "Union network comparison",
+    caption = "Encircled configurations with avg_diff_exp > 30 and num_nodes > 15"
   )
-
-plot(gg)
