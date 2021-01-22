@@ -84,7 +84,7 @@ z_score_matrix["rowname"] <- NULL
 # Move STRING_ids to first column
 z_score_matrix <- z_score_matrix[, c(499, (1:ncol(z_score_matrix))[-499])]
 
-# Step 6: Determine optimal cutoff
+# Step 6: Determine optimal cutoff ####
 z_score_1.5 <- z_score_matrix[-1]
 z_score_2 <- z_score_matrix[-1]
 z_score_3 <- z_score_matrix[-1]
@@ -138,5 +138,17 @@ saveRDS(counts_matrix_z_4, "use_case_data/gdc_data/data/counts_matrix_z_4.rds")
 # Save network
 human_string_network <- string_db$get_graph()
 saveRDS(human_string_network, "use_case_data/gdc_data/graphs/human_string_network_800.rds")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
