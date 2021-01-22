@@ -15,16 +15,18 @@ result <- pathway_statistics(indicator_matrix = counts_matrix_z_4, result = resu
 df <- plot_union_network_comparison(result = result)
 df_select <- df[df$avgDiffExp > 30 & df$numNodes > 15, ]
 # Scatterplot
-ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
+union_network_comparison <- ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
   geom_point(aes(col = config, size = avgDiffExp)) +
   geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
   geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0) +
-  scale_x_continuous(breaks = round(seq(0, max(df$numNodes), by = 10), 1)) +
-  scale_y_continuous(breaks = round(seq(0, max(df$avgDiffExp), by = 20), 1)) +
   labs(
     subtitle = "Number of nodes Vs Avg. DE. cases per gene",
     y = "Average differentialy expressed cases per gene",
     x = "Nodes in the pathway",
     title = "Union network comparison",
-    caption = "Encircled configurations with avg_diff_exp > 30 and num_nodes > 15"
-  )
+    caption = "Encircled configurations with avg_diff_exp > 30 and num_nodes > 15",
+    col = "Configurations",
+    size = "Avg. DE cases per configuration"
+  )+   theme(legend.position = "right", plot.title = element_text(size = 20), text = element_text(size = 15))
+
+ggsave(filename = "~/Desktop/union_network_comparison.png", union_network_comparison,width = 14,height = 8)
