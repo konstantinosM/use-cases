@@ -131,9 +131,10 @@ colnames(VeroE6_raw_count_24h) <- c("Control1", "Control2", "Control3","SARS-CoV
 getGEOSuppFiles("GSE148697")
 getGEOSuppFiles("GSE148696")
 # Step 4.1: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
-gse_GSE148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz"), )
+gse_GSE148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz"))
 
 # Step 4.2: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
+gse_GSE148696_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148696/GSE148696_counts.txt.gz"))
 
 
 
