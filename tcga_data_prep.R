@@ -45,7 +45,7 @@ data_solid_tissue_normal_counts <- GDCprepare(query_solid_tissue_normal_counts)
 data_solid_tissue_normal_counts <- assay(data_solid_tissue_normal_counts)
 # Merge in one matrix controls vs. disease
 # TODO counts <- merge(x = data_solid_tissue_normal_counts, y = data_primary_tumor_counts, by = "row.names") %>% column_to_rownames(var = "Row.names")
-counts <- readRDS("GDCdata/r_data/raw_counts.txt")
+counts <- readRDS("use_case_data/gdc_data/data/raw_counts.txt")
 # Step 5.1: DE analysis: TMM normalization and Z-score computation ####
 # TMM normalization of raw counts using edgeR and creation of z-score matrix
 # Define contrast groups
@@ -65,7 +65,7 @@ norm_counts <- norm_counts[keep, ]
 
 # Compute z-score of case samples
 # TODO z_score_matrix <- compute_z_scores(norm_counts, controls = c(1:52), cases = c(53:550))
-z_score_matrix <- readRDS("GDCdata/r_data/z_score_counts.txt")
+z_score_matrix <- readRDS("use_case_data/gdc_data/data/z_score_counts.txt")
 
 # Since we are going to use the STRING interaction network in this use cases we need to
 # substitute the EnsemblIDS with STRING ids
@@ -118,7 +118,7 @@ z_score_cutoff_comparison <- tibble(
   )
 )
 
-ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_cutoff, y = Genes)) +
+z_score_comparison <- ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_cutoff, y = Genes)) +
   geom_bar(stat = "identity", position = position_dodge()) +
   geom_text(aes(label = Genes), vjust = 1.5, color = "black", position = position_dodge(0.9), size = 5) +
   labs(
@@ -131,7 +131,7 @@ ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_cutoff, y = Genes)) +
   theme(legend.position = "top", plot.title = element_text(size = 18), text = element_text(size = 15))
 
 counts_matrix_z_4 <- data.frame(id = z_score_matrix$STRING_id, z_score_4)
-
+ggsave(filename = "~/Desktop/z_score_4_comparison.png", z_score_comparison, width = 14, height = 8)
 # Save count matrix
 saveRDS(counts_matrix_z_4, "use_case_data/gdc_data/data/counts_matrix_z_4.rds")
 

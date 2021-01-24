@@ -2,14 +2,7 @@
 # Install and load R packages
 source("install_and_load_libraries.R")
 # Step 1: Fetch study GSE147507 from GEO with 7 comparisons ####
-# In this case a GEO series record is fetched
-gse_147507 <- getGEO("GSE147507", GSEMatrix = TRUE)
-
-# Sometimes the data owners do not load the data into GEO (when assayData has 0 features)
-# but only provides supplementary files as in this case.
-# In that case the supplementrary files can be download as follows.
-getGEOSuppFiles("GSE147507")
-
+getGEOSuppFiles("GSE147507") 
 # The function saved the supplementary data of the GEO series in the current working directory as
 # a folder with the name of the series. No we just have to read the correct file as a data frame to obtain the raw counts
 gse_147507_raw_counts_human <- as.data.frame.matrix(read.delim("GSE147507/GSE147507_RawReadCounts_Human.tsv.gz"), )
@@ -87,10 +80,9 @@ lung_biopsy_raw_counts_series15 <- gse_147507_raw_counts_human[, c(
 )]
 
 # Step 2: Fetch study GSE148729 from GEO with 2 comparisons####
-gse_GSE148729 <- getGEO("GSE148729", GSEMatrix = TRUE)
-getGEOSuppFiles("GSE148729")
+getGEOSuppFiles("GSE148729", filter_regex = "*Calu3_totalRNA_readcounts*")
 gse_148729_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148729/GSE148729_Calu3_totalRNA_readcounts.tsv.gz"))
-# Step 2.1 Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 4 hours after infection ####
+# Step 2.1: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 4 hours after infection ####
 Calu3_raw_count_4h <- gse_148729_raw_counts_human[, c(
   "gene_id",
   "Calu3_totalRNA.S2.4h.A",
@@ -98,7 +90,7 @@ Calu3_raw_count_4h <- gse_148729_raw_counts_human[, c(
   "Calu3_totalRNA.mock.4h.A",
   "Calu3_totalRNA.mock.4h.B"
 )]
-# Step 2.1 Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 24 hours after infection ####
+# Step 2.2: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 24 hours after infection ####
 Calu3_raw_count_24h <- gse_148729_raw_counts_human[, c(
   "gene_id",
   "Calu3_totalRNA.S2.24h.A",
@@ -106,6 +98,44 @@ Calu3_raw_count_24h <- gse_148729_raw_counts_human[, c(
   "Calu3_totalRNA.mock.24h.A",
   "Calu3_totalRNA.mock.24h.B"
 )]
+# Step 3: Fetch study GSE153940 from GEO with 1 comparison ####
+getGEOSuppFiles("GSE153940")
+# Step 3.1: Samples with SARS-CoV-2 infected and mock treated VeroE6 cells. 24 hours after infection ####
+# Unpack tar
+untar("GSE153940/GSE153940_RAW.tar", exdir = "GSE153940/")
+samples <- paste0("GSE153940/", list.files(path = "GSE153940/", pattern = "*.gz"))s
+i <- 1
+while(i <= length(samples)){
+  if(i==1){
+    VeroE6_raw_count_24h <- read.delim(file = samples[[i]])%>% select(gene_id, expected_count)%>% column_to_rownames(var = "gene_id")
+  }else{
+    VeroE6_raw_count_24h <- data.frame(VeroE6_raw_count_24h, read.delim(file = samples[[i]])%>% select(expected_count))
+  }
+  i = i + 1
+}
+
+colnames(VeroE6_raw_count_24h) <- c("Control1", "Control2", "Control3","SARS-CoV-1", "SARS-CoV-2", "SARS-CoV-3")
+
+
+
+
+
+
+
+
+
+
+
+
+# Step 4: Fetch study GSE148697 and GSE148696 from GEO with 2 comparisons ####
+getGEOSuppFiles("GSE148697")
+getGEOSuppFiles("GSE148696")
+# Step 4.1: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
+gse_GSE148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz"), )
+
+# Step 4.2: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
+
+
 
 
 
