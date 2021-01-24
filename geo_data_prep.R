@@ -1,23 +1,21 @@
 # SARS-CoV-2 data from GEO
 # Install and load R packages
-source("install_and_load.R")
-# Step 1: Fetch records from GEO ####
+source("install_and_load_libraries.R")
+# Step 1: Fetch study GSE147507 from GEO with 7 comparisons ####
 # In this case a GEO series record is fetched
 gse_147507 <- getGEO("GSE147507", GSEMatrix = TRUE)
-show(gse_147507)
 
 # Sometimes the data owners do not load the data into GEO (when assayData has 0 features)
 # but only provides supplementary files as in this case.
 # In that case the supplementrary files can be download as follows.
 getGEOSuppFiles("GSE147507")
 
-# The function saved the supplementary data of the GEO series in the current working directory as a folder with the name of the series
-# No we just have to read the correct file as a data frame to obtain the raw counts
+# The function saved the supplementary data of the GEO series in the current working directory as
+# a folder with the name of the series. No we just have to read the correct file as a data frame to obtain the raw counts
 gse_147507_raw_counts_human <- as.data.frame.matrix(read.delim("GSE147507/GSE147507_RawReadCounts_Human.tsv.gz"), )
 
-# Step 2: Select datasets ####
-# Samples with SARS-CoV-2 infected NHBE cells and mock treated NHBE cells
-NHBE_raw_counts <- gse_147507_raw_counts_human[, c(
+# Step 1.1: Samples with SARS-CoV-2 infected NHBE cells and mock treated NHBE cells ####
+NHBE_series1_raw_counts <- gse_147507_raw_counts_human[, c(
   "X",
   "Series1_NHBE_Mock_1",
   "Series1_NHBE_Mock_2",
@@ -26,14 +24,97 @@ NHBE_raw_counts <- gse_147507_raw_counts_human[, c(
   "Series1_NHBE_SARS.CoV.2_2",
   "Series1_NHBE_SARS.CoV.2_3"
 )]
-# Samples with HealthyLungBiopsy vs Covid Lung
-lung_biopsy_raw_counts <- gse_147507_raw_counts_human[, c(
+
+# Step 1.2.: Samples with SARS-CoV-2 infected and mock treated A549 cells. Series 2#### 
+A549_series2_raw_counts <-  gse_147507_raw_counts_human[, c(
+  "X",
+  "Series2_A549_Mock_1",
+  "Series2_A549_Mock_2",
+  "Series2_A549_Mock_3",
+  "Series2_A549_SARS.CoV.2_1",
+  "Series2_A549_SARS.CoV.2_2",
+  "Series2_A549_SARS.CoV.2_3"
+)]
+# Step 1.3: Samples with SARS-CoV-2 infected and mock treated A549 cells. Series 5#### 
+A549_series5_raw_counts <-  gse_147507_raw_counts_human[, c(
+  "X",
+  "Series5_A549_Mock_1",
+  "Series5_A549_Mock_2",
+  "Series5_A549_Mock_3",
+  "Series5_A549_SARS.CoV.2_1",
+  "Series5_A549_SARS.CoV.2_2",
+  "Series5_A549_SARS.CoV.2_3"
+)]
+
+# Step 1.4: Samples with SARS-CoV-2 infected and mock treated A549-ACE2 cells. Series 6#### 
+A549_ACE2_series6_raw_counts <-  gse_147507_raw_counts_human[, c(
+  "X",
+  "Series6_A549.ACE2_Mock_1",
+  "Series6_A549.ACE2_Mock_2",
+  "Series6_A549.ACE2_Mock_3",
+  "Series6_A549.ACE2_SARS.CoV.2_1",
+  "Series6_A549.ACE2_SARS.CoV.2_2",
+  "Series6_A549.ACE2_SARS.CoV.2_3"
+)]
+# Step 1.5: Samples with SARS-CoV-2 infected and mock treated A549-ACE2 cells. Series 16#### 
+A549_ACE2_series16_raw_counts <-  gse_147507_raw_counts_human[, c(
+  "X",
+  "Series16_A549.ACE2_Mock_1",
+  "Series16_A549.ACE2_Mock_2",
+  "Series16_A549.ACE2_Mock_3",
+  "Series16_A549.ACE2_SARS.CoV.2_1",
+  "Series16_A549.ACE2_SARS.CoV.2_2",
+  "Series16_A549.ACE2_SARS.CoV.2_3"
+)]
+# Step 1.6: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. Series 7#### 
+Calu3_raw_count_series7 <- gse_147507_raw_counts_human[, c(
+  "X",
+  "Series7_Calu3_Mock_1",
+  "Series7_Calu3_Mock_2",
+  "Series7_Calu3_Mock_3",
+  "Series7_Calu3_SARS.CoV.2_1",
+  "Series7_Calu3_SARS.CoV.2_2",
+  "Series7_Calu3_SARS.CoV.2_3"
+)]
+
+# Step 1.7: Samples with HealthyLungBiopsy vs Covid Lung ####
+lung_biopsy_raw_counts_series15 <- gse_147507_raw_counts_human[, c(
   "X",
   "Series15_HealthyLungBiopsy_1",
   "Series15_HealthyLungBiopsy_2",
   "Series15_COVID19Lung_1",
   "Series15_COVID19Lung_2"
 )]
+
+# Step 2: Fetch study GSE148729 from GEO with 2 comparisons####
+gse_GSE148729 <- getGEO("GSE148729", GSEMatrix = TRUE)
+getGEOSuppFiles("GSE148729")
+gse_148729_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148729/GSE148729_Calu3_totalRNA_readcounts.tsv.gz"))
+# Step 2.1 Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 4 hours after infection ####
+Calu3_raw_count_4h <- gse_148729_raw_counts_human[, c(
+  "gene_id",
+  "Calu3_totalRNA.S2.4h.A",
+  "Calu3_totalRNA.S2.4h.B",
+  "Calu3_totalRNA.mock.4h.A",
+  "Calu3_totalRNA.mock.4h.B"
+)]
+# Step 2.1 Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 24 hours after infection ####
+Calu3_raw_count_24h <- gse_148729_raw_counts_human[, c(
+  "gene_id",
+  "Calu3_totalRNA.S2.24h.A",
+  "Calu3_totalRNA.S2.24h.B",
+  "Calu3_totalRNA.mock.24h.A",
+  "Calu3_totalRNA.mock.24h.B"
+)]
+
+
+
+
+
+
+
+
+
 # Step 3.1: DE analysis: NHBE raw counts ####
 # Run DESeq2 on NHBE_raw_counts counts to get DEGs 
 # Set gene name as rownames and remove gene name col
