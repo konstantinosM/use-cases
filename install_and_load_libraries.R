@@ -14,7 +14,7 @@ if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse"
 if (!requireNamespace("TCGAutils", quietly = TRUE)) BiocManager::install("TCGAutils")
 if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) BiocManager::install("TCGAbiolinks")
 if (!requireNamespace("curatedTCGAData", quietly = TRUE)) BiocManager::install("curatedTCGAData")
-
+if (!requireNamespace("biomaRt", quietly = TRUE)) BiocManager::install("biomaRt")
 
 # Load libraries
 # Gene expression datasets
@@ -37,4 +37,6 @@ library("tidyverse")
 library("TCGAutils")
 library("TCGAbiolinks")
 library("curatedTCGAData")
+# Convert Ensembl ids to hgnc symbols
+library("biomaRt")
 

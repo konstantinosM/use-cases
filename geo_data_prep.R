@@ -90,6 +90,9 @@ Calu3_raw_count_4h <- gse_148729_raw_counts_human[, c(
   "Calu3_totalRNA.mock.4h.A",
   "Calu3_totalRNA.mock.4h.B"
 )]
+# Remove version number from Ensembl IDS
+Calu3_raw_count_4h$gene_id <- unlist(lapply(X = Calu3_raw_count_4h$gene_id, FUN = sub, pattern = "\\.\\d+$", replacement = ""))
+
 # Step 2.2: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 24 hours after infection ####
 Calu3_raw_count_24h <- gse_148729_raw_counts_human[, c(
   "gene_id",
@@ -98,38 +101,39 @@ Calu3_raw_count_24h <- gse_148729_raw_counts_human[, c(
   "Calu3_totalRNA.mock.24h.A",
   "Calu3_totalRNA.mock.24h.B"
 )]
-# Step 3: Fetch study GSE153940 from GEO with 1 comparison ####
-getGEOSuppFiles("GSE153940")
-# Step 3.1: Samples with SARS-CoV-2 infected and mock treated VeroE6 cells. 24 hours after infection ####
-# Unpack tar
-untar("GSE153940/GSE153940_RAW.tar", exdir = "GSE153940/")
-samples <- paste0("GSE153940/", list.files(path = "GSE153940/", pattern = "*.gz"))
-i <- 1
-while (i <= length(samples)) {
-  if (i == 1) {
-    VeroE6_raw_count_24h <- read.delim(file = samples[[i]]) %>%
-      select(gene_id, expected_count) %>%
-      column_to_rownames(var = "gene_id")
-  } else {
-    VeroE6_raw_count_24h <- data.frame(VeroE6_raw_count_24h, read.delim(file = samples[[i]]) %>% select(expected_count))
-  }
-  i <- i + 1
-}
+# Remove version number from Ensembl IDS
+Calu3_raw_count_24h$gene_id <- unlist(lapply(X = Calu3_raw_count_24h$gene_id, FUN = sub, pattern = "\\.\\d+$", replacement = ""))
 
-colnames(VeroE6_raw_count_24h) <- c("Control1", "Control2", "Control3", "SARS-CoV-1", "SARS-CoV-2", "SARS-CoV-3")
-# Step 4: Fetch study GSE148697 and GSE148696 from GEO with 2 comparisons ####
+# Step 2.3: Convert Ensembl ids to hgnc symbol
+# Select a BioMart databses
+ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")
+ensembl_ids <- Calu3_raw_count_4h$gene_id
+identifier_conversion_table <- getBM(
+  attributes = c("ensembl_gene_id", "hgnc_symbol"),
+  filters = "ensembl_gene_id",
+  values = ensembl_ids,
+  mart = ensembl
+)
+# Since Calu3_raw_count_24h$gene_id == Calu3_raw_count_4h$gene_id we can use the same identifier_conversion_table for both datasets
+Calu3_raw_count_4h <- merge(x = Calu3_raw_count_4h, y = identifier_conversion_table, by.x = "gene_id", by.y = "ensembl_gene_id")[-1]
+Calu3_raw_count_24h <- merge(x = Calu3_raw_count_24h, y = identifier_conversion_table, by.x = "gene_id", by.y = "ensembl_gene_id")[-1]
+# Remove all entries that were not mapped to a hgnc symbol
+Calu3_raw_count_4h <- Calu3_raw_count_4h[Calu3_raw_count_4h$hgnc_symbol != "", ]%>%select(hgnc_symbol, everything())
+Calu3_raw_count_24h <- Calu3_raw_count_24h[Calu3_raw_count_24h$hgnc_symbol != "", ]%>%select(hgnc_symbol, everything())
+
+# Step 3: Fetch study GSE148697 and GSE148696 from GEO with 2 comparisons ####
 getGEOSuppFiles("GSE148697")
 getGEOSuppFiles("GSE148696")
-# Step 4.1: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
+# Step 3.1: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
 gse_GSE148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz"))
 
-# Step 4.2: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
+# Step 3.2: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
 gse_GSE148696_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148696/GSE148696_counts.txt.gz"))
 
-# Step 5:Fetch study GSE164073 from GEO with 3 comparisons ####
+# Step 4:Fetch study GSE164073 from GEO with 3 comparisons ####
 getGEOSuppFiles("GSE164073")
 gse_164073_raw_counts_human <- as.data.frame.matrix(read.delim("GSE164073/GSE164073_Eye_count_matrix.csv.gz", sep = ","))
-# Step 5.1: Cornea Samples SARS-CoV-2 infected and mock treated ####
+# Step 4.1: Cornea Samples SARS-CoV-2 infected and mock treated ####
 cornea_raw_counts <- gse_164073_raw_counts_human[, c(
   "Gene",
   "MW1_cornea_mock_1",
@@ -140,7 +144,7 @@ cornea_raw_counts <- gse_164073_raw_counts_human[, c(
   "MW6_cornea_CoV2_3"
 )]
 
-# Step 5.2: Limbus Samples SARS-CoV-2 infected and mock treated ####
+# Step 4.2: Limbus Samples SARS-CoV-2 infected and mock treated ####
 limbus_raw_counts <- gse_164073_raw_counts_human[, c(
   "Gene",
   "MW7_limbus_mock_1",
@@ -151,7 +155,7 @@ limbus_raw_counts <- gse_164073_raw_counts_human[, c(
   "MW12_limbus_CoV2_3"
 )]
 
-# Step 5.3: Sdera Samples SARS-CoV-2 infected and mock treated ####
+# Step 4.3: Sdera Samples SARS-CoV-2 infected and mock treated ####
 sclera_raw_counts <- gse_164073_raw_counts_human[, c(
   "Gene",
   "MW13_sclera_mock_1",
@@ -167,7 +171,7 @@ sclera_raw_counts <- gse_164073_raw_counts_human[, c(
 comparisons <- list(
   NHBE_series1_raw_counts, A549_series2_raw_counts, A549_series5_raw_counts, A549_ACE2_series6_raw_counts, A549_ACE2_series16_raw_counts, Calu3_raw_count_series7, lung_biopsy_raw_counts_series15,
   Calu3_raw_count_4h, Calu3_raw_count_24h,
-  VeroE6_raw_count_24h,
+  #  VeroE6_raw_count_24h,
   gse_GSE148697_raw_counts_human, gse_GSE148696_raw_counts_human,
   cornea_raw_counts, limbus_raw_counts, sclera_raw_counts
 )
