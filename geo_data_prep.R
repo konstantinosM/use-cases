@@ -157,7 +157,7 @@ limbus_raw_counts <- gse_164073_raw_counts_human[, c(
   "MW12_limbus_CoV2_3"
 )]
 
-# Step 4.3: Sdera Samples SARS-CoV-2 infected and mock treated ####
+# Step 4.3: Sclera Samples SARS-CoV-2 infected and mock treated ####
 sclera_raw_counts <- gse_164073_raw_counts_human[, c(
   "hgnc_symbol",
   "MW13_sclera_mock_1",
@@ -176,6 +176,19 @@ comparisons <- list(
   gse_148697_raw_counts_human, gse_148696_raw_counts_human,
   cornea_raw_counts, limbus_raw_counts, sclera_raw_counts
 )
+names(comparisons) <- c("SARS-CoV-2 versus Mock infected NHBE cells",
+                        "SARS-CoV-2 versus Mock infected A549 cells (Series 2)", 
+                        "SARS-CoV-2 versus Mock infected A549 cells (Series 5)",
+                        "SARS-CoV-2 versus Mock infected A549-ACE2 cells (Series 6)",
+                        "SARS-CoV-2 versus Mock infected A549-ACE2 cells (Series 16)",
+                        "SARS-CoV-2 versus Mock infected Calu3 cells",
+                        "Covid 19 lung versus Healthy lung biopsy",
+                        "SARS-CoV-2 versuc Mock infected HPSC-derived lung organoids",
+                        "SARS-CoV-2 versuc Mock infected HPSC-derived colonic organoids",
+                        "SARS-CoV-2 versuc Mock infected Cornea sample",
+                        "SARS-CoV-2 versuc Mock infected Limbus sample",
+                        "SARS-CoV-2 versuc Mock infected Sclera sample")
+
 # Get ids that are available in every dataset
 ids <- comparisons[[1]]$hgnc_symbol
 
@@ -209,8 +222,64 @@ while (j <= length(comparisons)) {
   #dds <- dds[rowSums(DESeq2::counts(dds)) > 1, ]
   # Contrast the samples infected with SARS.CoV.2 to the Mock infected samples
   # Important: The order in which the conditions are specified is important
-  comparisons_results[j] <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"))
-
+ # comparisons_results[j] <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), independentFiltering=FALSE)
+  results <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), independentFiltering=FALSE)
+  results <- lfcShrink(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
+  fc_cutoff <- 0.5
+  pCutoff <- 0.05
+  # Plot volcano plot to asses good cutoffs
+  EnhancedVolcano(results,
+                  lab = rownames(results),
+                  title = "SARS-CoV-2 versus Mock infected  cells",
+                  subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
+                  caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = "),
+                  x = "log2FoldChange",
+                  y = "padj",
+                  FCcutoff = fc_cutoff,
+                  pCutoff = pCutoff,
+                  ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
+                  xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
+  )
+  
   j <- j + 1
 }
+
+
+
+# Step 4.1: Find cutoffs and create indicator matrix (NHBE) ####
+# Shrink LFC values
+results <- lfcShrink(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
+# Set cutoff for p_adj and fc
+fc_cutoff <- 0.5
+pCutoff <- 0.05
+# Exrtact results for specific log2FoldChange and p_adj cutoff
+p_adjusted_vals <- results$padj <= pCutoff
+p_adjusted_vals[is.na(p_adjusted_vals)] <- FALSE
+deg_deseq <- rownames(results[(results$log2FoldChange <= -fc_cutoff | results$log2FoldChange >= fc_cutoff) & p_adjusted_vals, ])
+
+# Plot volcano plot to asses good cutoffs
+EnhancedVolcano(results,
+                lab = rownames(results),
+                title = "SARS-CoV-2 versus Mock infected NHBE cells",
+                subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
+                caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
+                x = "log2FoldChange",
+                y = "padj",
+                FCcutoff = fc_cutoff,
+                pCutoff = pCutoff,
+                ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
+                xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
+)
+
+
+
+
+
+
+
+
+
+
+
+
 
