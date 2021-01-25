@@ -15,6 +15,7 @@ if (!requireNamespace("TCGAutils", quietly = TRUE)) BiocManager::install("TCGAut
 if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) BiocManager::install("TCGAbiolinks")
 if (!requireNamespace("curatedTCGAData", quietly = TRUE)) BiocManager::install("curatedTCGAData")
 if (!requireNamespace("biomaRt", quietly = TRUE)) BiocManager::install("biomaRt")
+if (!requireNamespace("UpSetR", quietly = TRUE)) install.packages("UpSetR")
 
 # Load libraries
 # Gene expression datasets
@@ -33,6 +34,7 @@ library("KeyPathwayMineR")
 # Visualization and data management
 library("EnhancedVolcano")
 library("tidyverse")
+library("UpSetR")
 # Working with data from TCGA
 library("TCGAutils")
 library("TCGAbiolinks")

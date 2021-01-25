@@ -5,7 +5,7 @@ source("install_and_load_libraries.R")
 getGEOSuppFiles("GSE147507")
 # The function saved the supplementary data of the GEO series in the current working directory as
 # a folder with the name of the series. No we just have to read the correct file as a data frame to obtain the raw counts
-gse_147507_raw_counts_human <-read.delim("GSE147507/GSE147507_RawReadCounts_Human.tsv.gz")
+gse_147507_raw_counts_human <- read.delim("GSE147507/GSE147507_RawReadCounts_Human.tsv.gz")
 colnames(gse_147507_raw_counts_human)[1] <- "hgnc_symbol"
 
 # Step 1.1: Samples with SARS-CoV-2 infected NHBE cells and mock treated NHBE cells ####
@@ -126,7 +126,7 @@ Calu3_raw_count_24h <- Calu3_raw_count_24h[Calu3_raw_count_24h$hgnc_symbol != ""
 getGEOSuppFiles("GSE148697")
 getGEOSuppFiles("GSE148696")
 # Step 3.1: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
-gse_148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz")) 
+gse_148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz"))
 colnames(gse_148697_raw_counts_human)[1] <- "hgnc_symbol"
 # Step 3.2: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
 gse_148696_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148696/GSE148696_counts.txt.gz"))
@@ -172,29 +172,31 @@ sclera_raw_counts <- gse_164073_raw_counts_human[, c(
 # List with all comparisons
 comparisons <- list(
   NHBE_series1_raw_counts, A549_series2_raw_counts, A549_series5_raw_counts, A549_ACE2_series6_raw_counts, A549_ACE2_series16_raw_counts, Calu3_raw_count_series7, lung_biopsy_raw_counts_series15,
-#  Calu3_raw_count_4h, Calu3_raw_count_24h,
+  #  Calu3_raw_count_4h, Calu3_raw_count_24h,
   gse_148697_raw_counts_human, gse_148696_raw_counts_human,
   cornea_raw_counts, limbus_raw_counts, sclera_raw_counts
 )
-names(comparisons) <- c("SARS-CoV-2 versus Mock infected NHBE cells",
-                        "SARS-CoV-2 versus Mock infected A549 cells (Series 2)", 
-                        "SARS-CoV-2 versus Mock infected A549 cells (Series 5)",
-                        "SARS-CoV-2 versus Mock infected A549-ACE2 cells (Series 6)",
-                        "SARS-CoV-2 versus Mock infected A549-ACE2 cells (Series 16)",
-                        "SARS-CoV-2 versus Mock infected Calu3 cells",
-                        "Covid 19 lung versus Healthy lung biopsy",
-                        "SARS-CoV-2 versuc Mock infected HPSC-derived lung organoids",
-                        "SARS-CoV-2 versuc Mock infected HPSC-derived colonic organoids",
-                        "SARS-CoV-2 versuc Mock infected Cornea sample",
-                        "SARS-CoV-2 versuc Mock infected Limbus sample",
-                        "SARS-CoV-2 versuc Mock infected Sclera sample")
+names(comparisons) <- c(
+  "SARS-CoV-2 versus Mock infected NHBE cells",
+  "SARS-CoV-2 versus Mock infected A549 cells (Series 2)",
+  "SARS-CoV-2 versus Mock infected A549 cells (Series 5)",
+  "SARS-CoV-2 versus Mock infected A549-ACE2 cells (Series 6)",
+  "SARS-CoV-2 versus Mock infected A549-ACE2 cells (Series 16)",
+  "SARS-CoV-2 versus Mock infected Calu3 cells",
+  "Covid 19 lung versus Healthy lung biopsy",
+  "SARS-CoV-2 versus Mock infected HPSC-derived lung organoids",
+  "SARS-CoV-2 versus Mock infected HPSC-derived colonic organoids",
+  "SARS-CoV-2 versus Mock infected Cornea sample",
+  "SARS-CoV-2 versus Mock infected Limbus sample",
+  "SARS-CoV-2 versus Mock infected Sclera sample"
+)
 
 # Get ids that are available in every dataset
 ids <- comparisons[[1]]$hgnc_symbol
 
 j <- 2
 while (j <= length(comparisons)) {
-  ids <- intersect(x = ids,y = comparisons[[j]]$hgnc_symbol)
+  ids <- intersect(x = ids, y = comparisons[[j]]$hgnc_symbol)
   j <- j + 1
 }
 
@@ -202,74 +204,70 @@ while (j <= length(comparisons)) {
 # And move hgnc_symbols to rownames
 j <- 1
 while (j <= length(comparisons)) {
-  comparisons[[j]] <- comparisons[[j]][comparisons[[j]]$hgnc_symbol%in%ids,]
+  comparisons[[j]] <- comparisons[[j]][comparisons[[j]]$hgnc_symbol %in% ids, ]
   rownames(comparisons[[j]]) <- comparisons[[j]]$hgnc_symbol
   comparisons[[j]] <- comparisons[[j]][-1]
   j <- j + 1
 }
 # Step 6: DE-Analysis with DESeq2 ####
-# Run DESeq2 on NHBE_raw_counts counts to get DEGs 
-# Create a DESeq dataset object from the count matrix and the colData
-comparisons_results <- list()
+dds_list <- list()
 j <- 1
 while (j <= length(comparisons)) {
-  coldata <- data.frame(condition = factor(c(rep("Mock", ncol(comparisons[[j]])/2 ), rep("SARS.CoV.2", ncol(comparisons[[j]])/2))))
+  coldata <- data.frame(condition = factor(c(rep("Mock", ncol(comparisons[[j]]) / 2), rep("SARS.CoV.2", ncol(comparisons[[j]]) / 2))))
   rownames(coldata) <- colnames(comparisons[[j]])
   dds <- DESeqDataSetFromMatrix(countData = comparisons[[j]], colData = coldata, design = ~condition)
   # Run DESeq and get results
-  dds <- DESeq(dds)
-  # Filter out genes that have less than two reads
-  #dds <- dds[rowSums(DESeq2::counts(dds)) > 1, ]
-  # Contrast the samples infected with SARS.CoV.2 to the Mock infected samples
-  # Important: The order in which the conditions are specified is important
- # comparisons_results[j] <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), independentFiltering=FALSE)
-  results <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), independentFiltering=FALSE)
-  results <- lfcShrink(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
-  fc_cutoff <- 0.5
-  pCutoff <- 0.05
-  # Plot volcano plot to asses good cutoffs
-  EnhancedVolcano(results,
-                  lab = rownames(results),
-                  title = "SARS-CoV-2 versus Mock infected  cells",
-                  subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
-                  caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = "),
-                  x = "log2FoldChange",
-                  y = "padj",
-                  FCcutoff = fc_cutoff,
-                  pCutoff = pCutoff,
-                  ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
-                  xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
-  )
-  
+  dds_list[[j]] <- DESeq(dds)
+
   j <- j + 1
 }
-
-
-
-# Step 4.1: Find cutoffs and create indicator matrix (NHBE) ####
-# Shrink LFC values
-results <- lfcShrink(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
-# Set cutoff for p_adj and fc
+names(dds_list) <- names(comparisons)
+##
+volcanos <- list()
+degs_deseq_list <- list()
 fc_cutoff <- 0.5
 pCutoff <- 0.05
-# Exrtact results for specific log2FoldChange and p_adj cutoff
-p_adjusted_vals <- results$padj <= pCutoff
-p_adjusted_vals[is.na(p_adjusted_vals)] <- FALSE
-deg_deseq <- rownames(results[(results$log2FoldChange <= -fc_cutoff | results$log2FoldChange >= fc_cutoff) & p_adjusted_vals, ])
+j <- 1
+while (j <= length(dds_list)) {
+  # Filter out genes that have less than two reads
+  # dds <- dds[rowSums(DESeq2::counts(dds)) > 1, ]
+  # Contrast the samples infected with SARS.CoV.2 to the Mock infected samples
+  # Important: The order in which the conditions are specified is important
+  # comparisons_results[j] <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), independentFiltering=FALSE)
+  results <- results(dds_list[[j]], contrast = c("condition", "SARS.CoV.2", "Mock"))
+  results <- lfcShrink(dds_list[[j]], contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
 
-# Plot volcano plot to asses good cutoffs
-EnhancedVolcano(results,
-                lab = rownames(results),
-                title = "SARS-CoV-2 versus Mock infected NHBE cells",
-                subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
-                caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
-                x = "log2FoldChange",
-                y = "padj",
-                FCcutoff = fc_cutoff,
-                pCutoff = pCutoff,
-                ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
-                xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
-)
+  p_adjusted_vals <- results$padj <= pCutoff
+  p_adjusted_vals[is.na(p_adjusted_vals)] <- FALSE
+  deg_deseq <- rownames(results[(results$log2FoldChange <= -fc_cutoff | results$log2FoldChange >= fc_cutoff) & p_adjusted_vals, ])
+  degs_deseq_list[[j]] <- deg_deseq
+  # Plot volcano plot to asses good cutoffs
+  volcanos[[j]] <- EnhancedVolcano(results,
+    lab = rownames(results),
+    title = names(comparisons)[j],
+    subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
+    caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
+    x = "log2FoldChange",
+    y = "padj",
+    FCcutoff = fc_cutoff,
+    pCutoff = pCutoff,
+    ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
+    xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
+  )
+  j <- j + 1
+}
+names(volcanos) <- names(dds_list)
+names(degs_deseq_list) <- names(dds_list)
+for (i in c(1:length(volcanos))) {
+  ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos/", names(volcanos)[i],".png"))
+}
+# Create indicator matrix ####
+indicator_matrix <- tibble(hgnc_symbol=ids)
+
+for (i in c(1:length(degs_deseq_list))) {
+  indicator_matrix[names(degs_deseq_list)[i]] <- ifelse(indicator_matrix$hgnc_symbol%in%unlist(degs_deseq_list[i]), 1, 0)
+}
+  
 
 
 
@@ -278,6 +276,18 @@ EnhancedVolcano(results,
 
 
 
+
+
+
+
+
+
+
+mutations <- read.csv( system.file("extdata", "mutations.csv", package = "UpSetR"), header=T, sep = ",")
+
+
+upset(mutations, sets = c("PTEN", "TP53", "EGFR", "PIK3R1", "RB1"), sets.bar.color = "#56B4E9",
+      order.by = "freq", empty.intersections = "on")
 
 
 
