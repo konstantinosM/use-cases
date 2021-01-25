@@ -262,32 +262,16 @@ for (i in c(1:length(volcanos))) {
   ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos/", names(volcanos)[i],".png"))
 }
 # Create indicator matrix ####
-indicator_matrix <- tibble(hgnc_symbol=ids)
+indicator_matrix <- data.frame(hgnc_symbol=ids)
 
 for (i in c(1:length(degs_deseq_list))) {
   indicator_matrix[names(degs_deseq_list)[i]] <- ifelse(indicator_matrix$hgnc_symbol%in%unlist(degs_deseq_list[i]), 1, 0)
 }
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Upset plot #### 
 mutations <- read.csv( system.file("extdata", "mutations.csv", package = "UpSetR"), header=T, sep = ",")
 
 
-upset(mutations, sets = c("PTEN", "TP53", "EGFR", "PIK3R1", "RB1"), sets.bar.color = "#56B4E9",
-      order.by = "freq", empty.intersections = "on")
+upset(indicator_matrix, sets = colnames(indicator_matrix)[-1], sets.bar.color = "#56B4E9", order.by = "freq", empty.intersections = "on")
 
 
 
