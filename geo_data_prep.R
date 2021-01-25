@@ -252,7 +252,7 @@ while (j <= length(dds_list)) {
     FCcutoff = fc_cutoff,
     pCutoff = pCutoff,
     ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
-    xlab = bquote(~ -Log[2] ~ "(" ~ italic(FoldChange) ~ ")"),
+    xlab = bquote(~ Log[2] ~ "(" ~ italic(FoldChange) ~ ")")
   )
   j <- j + 1
 }
@@ -261,17 +261,22 @@ names(degs_deseq_list) <- names(dds_list)
 for (i in c(1:length(volcanos))) {
   ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos/", names(volcanos)[i],".png"))
 }
+  grid <- ggarrange(plotlist = volcanos, ncol = 3, nrow = 4)
+ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos/grid.png", width = 30 ,height = 30)
+
 # Create indicator matrix ####
 indicator_matrix <- data.frame(hgnc_symbol=ids)
 
 for (i in c(1:length(degs_deseq_list))) {
   indicator_matrix[names(degs_deseq_list)[i]] <- ifelse(indicator_matrix$hgnc_symbol%in%unlist(degs_deseq_list[i]), 1, 0)
 }
-# Upset plot #### 
-mutations <- read.csv( system.file("extdata", "mutations.csv", package = "UpSetR"), header=T, sep = ",")
 
-
-upset(indicator_matrix, sets = colnames(indicator_matrix)[-1], sets.bar.color = "#56B4E9", order.by = "freq", empty.intersections = "on")
+upset(indicator_matrix,
+      sets = colnames(indicator_matrix)[-1],
+      sets.bar.color = "#56B4E9",
+      order.by = "freq", 
+      empty.intersections = "on",
+      keep.order = TRUE)
 
 
 
