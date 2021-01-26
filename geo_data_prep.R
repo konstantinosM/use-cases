@@ -216,26 +216,26 @@ while (j <= length(comparisons)) {
   coldata <- data.frame(condition = factor(c(rep("Mock", ncol(comparisons[[j]]) / 2), rep("SARS.CoV.2", ncol(comparisons[[j]]) / 2))))
   rownames(coldata) <- colnames(comparisons[[j]])
   dds <- DESeqDataSetFromMatrix(countData = comparisons[[j]], colData = coldata, design = ~condition)
+  # Filter out genes that have less than two reads
+  #dds <- dds[rowSums(DESeq2::counts(dds)) > 1, ]
+  
   # Run DESeq and get results
   dds_list[[j]] <- DESeq(dds)
 
   j <- j + 1
 }
 names(dds_list) <- names(comparisons)
-##
+# Step 7: Cutoffs, Volcano and DE genes ####
 volcanos <- list()
 degs_deseq_list <- list()
-fc_cutoff <- 0.5
-pCutoff <- 0.05
+fc_cutoff <- 1
+pCutoff <- 0.0001
 j <- 1
 while (j <= length(dds_list)) {
-  # Filter out genes that have less than two reads
-  # dds <- dds[rowSums(DESeq2::counts(dds)) > 1, ]
   # Contrast the samples infected with SARS.CoV.2 to the Mock infected samples
   # Important: The order in which the conditions are specified is important
-  # comparisons_results[j] <- results(dds, contrast = c("condition", "SARS.CoV.2", "Mock"), independentFiltering=FALSE)
   results <- results(dds_list[[j]], contrast = c("condition", "SARS.CoV.2", "Mock"))
-  results <- lfcShrink(dds_list[[j]], contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
+  #results <- lfcShrink(dds_list[[j]], contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
 
   p_adjusted_vals <- results$padj <= pCutoff
   p_adjusted_vals[is.na(p_adjusted_vals)] <- FALSE
@@ -259,26 +259,25 @@ while (j <= length(dds_list)) {
 names(volcanos) <- names(dds_list)
 names(degs_deseq_list) <- names(dds_list)
 for (i in c(1:length(volcanos))) {
-  ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos/", names(volcanos)[i],".png"))
+  ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos/", names(volcanos)[i], ".png"))
 }
-  grid <- ggarrange(plotlist = volcanos, ncol = 3, nrow = 4)
-ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos/grid.png", width = 30 ,height = 30)
+grid <- ggarrange(plotlist = volcanos, ncol = 3, nrow = 4)
+ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos/grid.png", width = 30, height = 30)
 
-# Create indicator matrix ####
-indicator_matrix <- data.frame(hgnc_symbol=ids)
+# Step 8: Create indicator matrix  ####
+indicator_matrix <- data.frame(hgnc_symbol = ids)
 
 for (i in c(1:length(degs_deseq_list))) {
-  indicator_matrix[names(degs_deseq_list)[i]] <- ifelse(indicator_matrix$hgnc_symbol%in%unlist(degs_deseq_list[i]), 1, 0)
+  indicator_matrix[names(degs_deseq_list)[i]] <- ifelse(indicator_matrix$hgnc_symbol %in% unlist(degs_deseq_list[i]), 1, 0)
 }
-
+colnames(indicator_matrix)[-1][1:7] <- paste0(colnames(indicator_matrix)[-1][1:7], " - GSE147507")
+colnames(indicator_matrix)[-1][8] <- paste0(colnames(indicator_matrix)[-1][8], " - GSE148697")
+colnames(indicator_matrix)[-1][9] <- paste0(colnames(indicator_matrix)[-1][9], " - GSE148696")
+colnames(indicator_matrix)[-1][10:12] <- paste0(colnames(indicator_matrix)[-1][9], " - GSE164073")
 upset(indicator_matrix,
-      sets = colnames(indicator_matrix)[-1],
-      sets.bar.color = "#56B4E9",
-      order.by = "freq", 
-      empty.intersections = "on",
-      keep.order = TRUE)
-
-
-
-
-
+  sets = colnames(indicator_matrix)[-1],
+  sets.bar.color = "#56B4E9",
+  order.by = "freq",
+  empty.intersections = "on",
+  keep.order = TRUE
+)
