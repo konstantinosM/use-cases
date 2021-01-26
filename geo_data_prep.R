@@ -176,7 +176,7 @@ AT2_raw_counts <- gse_160435_raw_counts_human[, c(
 # Series 6: Fetch study GSE157852 from GEO with 2 comparisons ####
 getGEOSuppFiles("GSE157852")
 gse_157852_raw_counts_human <- as.data.frame.matrix(read.delim("GSE157852/GSE157852_CPO_RawCounts.txt.gz", sep = " "))%>% rownames_to_column(var = "hgnc_symbol")
-# Comp. 5.1:  Samples with SARS-CoV-2 infected and mock treated choroid plexus organoids cells 72 hours post infection (hpi)####
+# Comp. 6.1:  Samples with SARS-CoV-2 infected and mock treated choroid plexus organoids cells 72 hours post infection (hpi)####
 choroid_plexus_72_raw_counts <- gse_157852_raw_counts_human[, c(
   "hgnc_symbol",
   "CPO_Mock_72hpi_S1",
@@ -186,7 +186,7 @@ choroid_plexus_72_raw_counts <- gse_157852_raw_counts_human[, c(
   "CPO_SARS.CoV.2_72hpi_S8",
   "CPO_SARS.CoV.2_72hpi_S9"
 )]
-# Comp. 5.2:  Samples with SARS-CoV-2 infected organoids cells 24hpi and mock treated choroid plexus organoids cells 72 hpi####
+# Comp. 6.2:  Samples with SARS-CoV-2 infected organoids cells 24hpi and mock treated choroid plexus organoids cells 72 hpi####
 choroid_plexus_24_raw_counts <- gse_157852_raw_counts_human[, c(
   "hgnc_symbol",
   "CPO_Mock_72hpi_S1",
@@ -197,6 +197,20 @@ choroid_plexus_24_raw_counts <- gse_157852_raw_counts_human[, c(
   "CPO_SARS.CoV.2_24hpi_S6"
 )]
 
+
+
+
+
+
+
+# Series 7: Fetch study GSE152075 from GEO with 1 comparisons ####
+getGEOSuppFiles("GSE152075")
+gse_152075_raw_counts_human <- as.data.frame.matrix(read.delim("GSE152075/GSE152075_raw_counts_GEO.txt.gz", sep = " "))%>% rownames_to_column(var = "hgnc_symbol")
+# Comp. 7.1 Nasopharyngeal swabs from 430 individuals with SARS-CoV-2 and 54 negative controls ####
+control <- colnames(gse_152075_raw_counts_human)[startsWith(x = colnames(gse_152075_raw_counts_human),prefix = "NEG_")]
+sars_cov_2 <- colnames(gse_152075_raw_counts_human)[startsWith(x = colnames(gse_152075_raw_counts_human),prefix = "POS_")]
+nasopharyngeal_swabs_raw_counts <- gse_152075_raw_counts_human[,c("hgnc_symbol", control, sars_cov_2)]
+
 # Step 1: Unify hgnc_symbol ####
 # List with all comparisons
 comparisons <- list(
@@ -205,7 +219,8 @@ comparisons <- list(
   gse_148697_raw_counts_human, gse_148696_raw_counts_human,
   cornea_raw_counts, limbus_raw_counts, sclera_raw_counts,
   AT2_raw_counts,
-  choroid_plexus_72_raw_counts, choroid_plexus_24_raw_counts
+  choroid_plexus_72_raw_counts, choroid_plexus_24_raw_counts,
+  nasopharyngeal_swabs_raw_counts
 )
 names(comparisons) <- c(
   "SARS-CoV-2 versus Mock infected NHBE cells",
@@ -231,7 +246,9 @@ names(comparisons) <- c(
   "SARS-CoV-2 versus Mock infected AT2 cells",
   
   "SARS-CoV-2 versus Mock infected Organoid cells 72 hpi",
-  "SARS-CoV-2 versus Mock infected AT2 cells 24 hpi"
+  "SARS-CoV-2 versus Mock infected Organoid cells 24 hpi",
+
+  "Nasopharyngeal swabs from 430 individuals with SARS-CoV-2 and 54 negative controls"
 )
 
 # Get ids that are available in every dataset
