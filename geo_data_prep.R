@@ -1,14 +1,14 @@
 # SARS-CoV-2 data from GEO
 # Install and load R packages
 source("install_and_load_libraries.R")
-# Step 1: Fetch study GSE147507 from GEO with 7 comparisons ####
+# Series 1: Fetch study GSE147507 from GEO with 7 comparisons ####
 getGEOSuppFiles("GSE147507")
 # The function saved the supplementary data of the GEO series in the current working directory as
 # a folder with the name of the series. No we just have to read the correct file as a data frame to obtain the raw counts
 gse_147507_raw_counts_human <- read.delim("GSE147507/GSE147507_RawReadCounts_Human.tsv.gz")
 colnames(gse_147507_raw_counts_human)[1] <- "hgnc_symbol"
 
-# Step 1.1: Samples with SARS-CoV-2 infected NHBE cells and mock treated NHBE cells ####
+# Comp. 1.1: Samples with SARS-CoV-2 infected NHBE cells and mock treated NHBE cells ####
 NHBE_series1_raw_counts <- gse_147507_raw_counts_human[, c(
   "hgnc_symbol",
   "Series1_NHBE_Mock_1",
@@ -19,7 +19,7 @@ NHBE_series1_raw_counts <- gse_147507_raw_counts_human[, c(
   "Series1_NHBE_SARS.CoV.2_3"
 )]
 
-# Step 1.2.: Samples with SARS-CoV-2 infected and mock treated A549 cells. Series 2####
+# Comp. 1.2.: Samples with SARS-CoV-2 infected and mock treated A549 cells. Series 2####
 A549_series2_raw_counts <- gse_147507_raw_counts_human[, c(
   "hgnc_symbol",
   "Series2_A549_Mock_1",
@@ -29,7 +29,7 @@ A549_series2_raw_counts <- gse_147507_raw_counts_human[, c(
   "Series2_A549_SARS.CoV.2_2",
   "Series2_A549_SARS.CoV.2_3"
 )]
-# Step 1.3: Samples with SARS-CoV-2 infected and mock treated A549 cells. Series 5####
+# Comp. 1.3: Samples with SARS-CoV-2 infected and mock treated A549 cells. Series 5####
 A549_series5_raw_counts <- gse_147507_raw_counts_human[, c(
   "hgnc_symbol",
   "Series5_A549_Mock_1",
@@ -40,7 +40,7 @@ A549_series5_raw_counts <- gse_147507_raw_counts_human[, c(
   "Series5_A549_SARS.CoV.2_3"
 )]
 
-# Step 1.4: Samples with SARS-CoV-2 infected and mock treated A549-ACE2 cells. Series 6####
+# Comp. 1.4: Samples with SARS-CoV-2 infected and mock treated A549-ACE2 cells. Series 6####
 A549_ACE2_series6_raw_counts <- gse_147507_raw_counts_human[, c(
   "hgnc_symbol",
   "Series6_A549.ACE2_Mock_1",
@@ -50,7 +50,7 @@ A549_ACE2_series6_raw_counts <- gse_147507_raw_counts_human[, c(
   "Series6_A549.ACE2_SARS.CoV.2_2",
   "Series6_A549.ACE2_SARS.CoV.2_3"
 )]
-# Step 1.5: Samples with SARS-CoV-2 infected and mock treated A549-ACE2 cells. Series 16####
+# Comp. 1.5: Samples with SARS-CoV-2 infected and mock treated A549-ACE2 cells. Series 16####
 A549_ACE2_series16_raw_counts <- gse_147507_raw_counts_human[, c(
   "hgnc_symbol",
   "Series16_A549.ACE2_Mock_1",
@@ -60,7 +60,7 @@ A549_ACE2_series16_raw_counts <- gse_147507_raw_counts_human[, c(
   "Series16_A549.ACE2_SARS.CoV.2_2",
   "Series16_A549.ACE2_SARS.CoV.2_3"
 )]
-# Step 1.6: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. Series 7####
+# Comp. 1.6: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. Series 7####
 Calu3_raw_count_series7 <- gse_147507_raw_counts_human[, c(
   "hgnc_symbol",
   "Series7_Calu3_Mock_1",
@@ -71,7 +71,7 @@ Calu3_raw_count_series7 <- gse_147507_raw_counts_human[, c(
   "Series7_Calu3_SARS.CoV.2_3"
 )]
 
-# Step 1.7: Samples with HealthyLungBiopsy vs Covid Lung ####
+# Comp. 1.7: Samples with HealthyLungBiopsy vs Covid Lung ####
 lung_biopsy_raw_counts_series15 <- gse_147507_raw_counts_human[, c(
   "hgnc_symbol",
   "Series15_HealthyLungBiopsy_1",
@@ -80,47 +80,34 @@ lung_biopsy_raw_counts_series15 <- gse_147507_raw_counts_human[, c(
   "Series15_COVID19Lung_2"
 )]
 
-# Step 2: Fetch study GSE148729 from GEO with 2 comparisons####
-getGEOSuppFiles("GSE148729", filter_regex = "*Calu3_totalRNA_readcounts*")
-gse_148729_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148729/GSE148729_Calu3_totalRNA_readcounts.tsv.gz"))
-# Step 2.1: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 4 hours after infection ####
-Calu3_raw_count_4h <- gse_148729_raw_counts_human[, c(
-  "gene_id",
-  "Calu3_totalRNA.S2.4h.A",
-  "Calu3_totalRNA.S2.4h.B",
-  "Calu3_totalRNA.mock.4h.A",
-  "Calu3_totalRNA.mock.4h.B"
-)]
-# Remove version number from Ensembl IDS
-Calu3_raw_count_4h$gene_id <- unlist(lapply(X = Calu3_raw_count_4h$gene_id, FUN = sub, pattern = "\\.\\d+$", replacement = ""))
-
-# Step 2.2: Samples with SARS-CoV-2 infected and mock treated Calu3 cells. 24 hours after infection ####
-Calu3_raw_count_24h <- gse_148729_raw_counts_human[, c(
-  "gene_id",
-  "Calu3_totalRNA.S2.24h.A",
-  "Calu3_totalRNA.S2.24h.B",
-  "Calu3_totalRNA.mock.24h.A",
-  "Calu3_totalRNA.mock.24h.B"
-)]
-# Remove version number from Ensembl IDS
-Calu3_raw_count_24h$gene_id <- unlist(lapply(X = Calu3_raw_count_24h$gene_id, FUN = sub, pattern = "\\.\\d+$", replacement = ""))
-
-# Step 2.3: Convert Ensembl ids to hgnc symbol
+# Series 2: Fetch study GSE151879 from GEO with 3 comparisons####
+getGEOSuppFiles("GSE151879")
+# Comp. 2.1: Samples with SARS-CoV-2 infected and mock treated HESC-derived cardiomyocytes cells. ####
+hesc_derived_cardiomyocytes_raw_counts <- read.delim(file = "GSE151879/GSE151879_raw_counts_genes.hESC-derived_cardiomyocytes.txt.gz")
+# Comp. 2.2: Samples with SARS-CoV-2 infected and mock treated human cardiomyocytes cells. ####
+human_cardiomyocytes_raw_counts <- read.delim(file = "GSE151879/GSE151879_raw_counts_genes.Adult_human_cardiomyocytes.txt.gz")
+# Comp. 2.3: Samples with SARS-CoV-2 infected and mock treated  macrophages ####
+macrophages_raw_counts <- read.delim(file = "GSE151879/GSE151879_raw_counts_genes.Macrophages.txt.gz")
+# Processing 2.a: Convert Ensembl ids to hgnc symbol ####
 # Select a BioMart databses
 ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")
-ensembl_ids <- Calu3_raw_count_4h$gene_id
+ensembl_ids <- macrophages_raw_counts$gene_id
 identifier_conversion_table <- getBM(
   attributes = c("ensembl_gene_id", "hgnc_symbol"),
   filters = "ensembl_gene_id",
   values = ensembl_ids,
   mart = ensembl
 )
-# Since Calu3_raw_count_24h$gene_id == Calu3_raw_count_4h$gene_id we can use the same identifier_conversion_table for both datasets
-Calu3_raw_count_4h <- merge(x = Calu3_raw_count_4h, y = identifier_conversion_table, by.x = "gene_id", by.y = "ensembl_gene_id")[-1]
-Calu3_raw_count_24h <- merge(x = Calu3_raw_count_24h, y = identifier_conversion_table, by.x = "gene_id", by.y = "ensembl_gene_id")[-1]
+
+# Since the gene_ids of all datasets are the same we can use the same identifier_conversion_table for all datasets
+hesc_derived_cardiomyocytes_raw_counts <- merge(x = hesc_derived_cardiomyocytes_raw_counts, y = identifier_conversion_table, by.x = "gene_id", by.y = "ensembl_gene_id")[-1]
+human_cardiomyocytes_raw_counts <- merge(x = human_cardiomyocytes_raw_counts, y = identifier_conversion_table, by.x = "gene_id", by.y = "ensembl_gene_id")[-1]
+macrophages_raw_counts <- merge(x = macrophages_raw_counts, y = identifier_conversion_table, by.x = "gene_id", by.y = "ensembl_gene_id")[-1]
 # Remove all entries that were not mapped to a hgnc symbol
-Calu3_raw_count_4h <- Calu3_raw_count_4h[Calu3_raw_count_4h$hgnc_symbol != "", ] %>% select(hgnc_symbol, everything())
-Calu3_raw_count_24h <- Calu3_raw_count_24h[Calu3_raw_count_24h$hgnc_symbol != "", ] %>% select(hgnc_symbol, everything())
+hesc_derived_cardiomyocytes_raw_counts <- hesc_derived_cardiomyocytes_raw_counts[hesc_derived_cardiomyocytes_raw_counts$hgnc_symbol != "", ] %>% select(hgnc_symbol, everything())
+human_cardiomyocytes_raw_counts <- human_cardiomyocytes_raw_counts[human_cardiomyocytes_raw_counts$hgnc_symbol != "", ] %>% select(hgnc_symbol, everything())
+macrophages_raw_counts <- macrophages_raw_counts[macrophages_raw_counts$hgnc_symbol != "", ] %>% select(hgnc_symbol, everything())
+
 
 # Step 3: Fetch study GSE148697 and GSE148696 from GEO with 2 comparisons ####
 getGEOSuppFiles("GSE148697")
@@ -168,11 +155,12 @@ sclera_raw_counts <- gse_164073_raw_counts_human[, c(
   "MW18_sclera_CoV2_3"
 )]
 
-# Step 5: Unify hgnc_symbol ####
+
+# Step 1: Unify hgnc_symbol ####
 # List with all comparisons
 comparisons <- list(
   NHBE_series1_raw_counts, A549_series2_raw_counts, A549_series5_raw_counts, A549_ACE2_series6_raw_counts, A549_ACE2_series16_raw_counts, Calu3_raw_count_series7, lung_biopsy_raw_counts_series15,
-  #  Calu3_raw_count_4h, Calu3_raw_count_24h,
+  hesc_derived_cardiomyocytes_raw_counts, human_cardiomyocytes_raw_counts, macrophages_raw_counts,
   gse_148697_raw_counts_human, gse_148696_raw_counts_human,
   cornea_raw_counts, limbus_raw_counts, sclera_raw_counts
 )
@@ -209,7 +197,7 @@ while (j <= length(comparisons)) {
   comparisons[[j]] <- comparisons[[j]][-1]
   j <- j + 1
 }
-# Step 6: DE-Analysis with DESeq2 ####
+# Step 2: DE-Analysis with DESeq2 ####
 dds_list <- list()
 j <- 1
 while (j <= length(comparisons)) {
@@ -225,7 +213,7 @@ while (j <= length(comparisons)) {
   j <- j + 1
 }
 names(dds_list) <- names(comparisons)
-# Step 7: Cutoffs, Volcano and DE genes ####
+# Step 3: Cutoffs, Volcano and DE genes ####
 volcanos <- list()
 degs_deseq_list <- list()
 fc_cutoff <- 1
@@ -264,7 +252,7 @@ for (i in c(1:length(volcanos))) {
 grid <- ggarrange(plotlist = volcanos, ncol = 3, nrow = 4)
 ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos/grid.png", width = 30, height = 30)
 
-# Step 8: Create indicator matrix  ####
+# Step 4: Create indicator matrix  ####
 indicator_matrix <- data.frame(hgnc_symbol = ids)
 
 for (i in c(1:length(degs_deseq_list))) {
@@ -273,11 +261,24 @@ for (i in c(1:length(degs_deseq_list))) {
 colnames(indicator_matrix)[-1][1:7] <- paste0(colnames(indicator_matrix)[-1][1:7], " - GSE147507")
 colnames(indicator_matrix)[-1][8] <- paste0(colnames(indicator_matrix)[-1][8], " - GSE148697")
 colnames(indicator_matrix)[-1][9] <- paste0(colnames(indicator_matrix)[-1][9], " - GSE148696")
-colnames(indicator_matrix)[-1][10:12] <- paste0(colnames(indicator_matrix)[-1][9], " - GSE164073")
+colnames(indicator_matrix)[-1][10:12] <- paste0(colnames(indicator_matrix)[-1][10:12], " - GSE164073")
 upset(indicator_matrix,
   sets = colnames(indicator_matrix)[-1],
   sets.bar.color = "#56B4E9",
   order.by = "freq",
   empty.intersections = "on",
-  keep.order = TRUE
+  keep.order = TRUE,
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
