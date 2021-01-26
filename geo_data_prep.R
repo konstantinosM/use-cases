@@ -3,8 +3,6 @@
 source("install_and_load_libraries.R")
 # Series 1: Fetch study GSE147507 from GEO with 7 comparisons ####
 getGEOSuppFiles("GSE147507")
-# The function saved the supplementary data of the GEO series in the current working directory as
-# a folder with the name of the series. No we just have to read the correct file as a data frame to obtain the raw counts
 gse_147507_raw_counts_human <- read.delim("GSE147507/GSE147507_RawReadCounts_Human.tsv.gz")
 colnames(gse_147507_raw_counts_human)[1] <- "hgnc_symbol"
 
@@ -84,9 +82,9 @@ lung_biopsy_raw_counts_series15 <- gse_147507_raw_counts_human[, c(
 getGEOSuppFiles("GSE151879")
 # Comp. 2.1: Samples with SARS-CoV-2 infected and mock treated HESC-derived cardiomyocytes cells. ####
 hesc_derived_cardiomyocytes_raw_counts <- read.delim(file = "GSE151879/GSE151879_raw_counts_genes.hESC-derived_cardiomyocytes.txt.gz")
-# Comp. 2.2: Samples with SARS-CoV-2 infected and mock treated human cardiomyocytes cells. ####
+# Comp. 2.2: Samples with SARS-CoV-2 infected and mock treated Human cardiomyocytes cells. ####
 human_cardiomyocytes_raw_counts <- read.delim(file = "GSE151879/GSE151879_raw_counts_genes.Adult_human_cardiomyocytes.txt.gz")
-# Comp. 2.3: Samples with SARS-CoV-2 infected and mock treated  macrophages ####
+# Comp. 2.3: Samples with SARS-CoV-2 infected and mock treated macrophages ####
 macrophages_raw_counts <- read.delim(file = "GSE151879/GSE151879_raw_counts_genes.Macrophages.txt.gz")
 # Processing 2.a: Convert Ensembl ids to hgnc symbol ####
 # Select a BioMart databses
@@ -109,20 +107,20 @@ human_cardiomyocytes_raw_counts <- human_cardiomyocytes_raw_counts[human_cardiom
 macrophages_raw_counts <- macrophages_raw_counts[macrophages_raw_counts$hgnc_symbol != "", ] %>% select(hgnc_symbol, everything())
 
 
-# Step 3: Fetch study GSE148697 and GSE148696 from GEO with 2 comparisons ####
+# Series 3: Fetch study GSE148697 and GSE148696 from GEO with 2 comparisons ####
 getGEOSuppFiles("GSE148697")
 getGEOSuppFiles("GSE148696")
-# Step 3.1: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
+# Comp. 3.1: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
 gse_148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz"))
 colnames(gse_148697_raw_counts_human)[1] <- "hgnc_symbol"
-# Step 3.2: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
+# Comp. 3.2: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
 gse_148696_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148696/GSE148696_counts.txt.gz"))
 colnames(gse_148696_raw_counts_human)[1] <- "hgnc_symbol"
-# Step 4:Fetch study GSE164073 from GEO with 3 comparisons ####
+# Series 4:Fetch study GSE164073 from GEO with 3 comparisons ####
 getGEOSuppFiles("GSE164073")
 gse_164073_raw_counts_human <- as.data.frame.matrix(read.delim("GSE164073/GSE164073_Eye_count_matrix.csv.gz", sep = ","))
 colnames(gse_164073_raw_counts_human)[1] <- "hgnc_symbol"
-# Step 4.1: Cornea Samples SARS-CoV-2 infected and mock treated ####
+# Comp. 4.1: Cornea Samples SARS-CoV-2 infected and mock treated ####
 cornea_raw_counts <- gse_164073_raw_counts_human[, c(
   "hgnc_symbol",
   "MW1_cornea_mock_1",
@@ -133,7 +131,7 @@ cornea_raw_counts <- gse_164073_raw_counts_human[, c(
   "MW6_cornea_CoV2_3"
 )]
 
-# Step 4.2: Limbus Samples SARS-CoV-2 infected and mock treated ####
+# Comp. 4.2: Limbus Samples SARS-CoV-2 infected and mock treated ####
 limbus_raw_counts <- gse_164073_raw_counts_human[, c(
   "hgnc_symbol",
   "MW7_limbus_mock_1",
@@ -144,7 +142,7 @@ limbus_raw_counts <- gse_164073_raw_counts_human[, c(
   "MW12_limbus_CoV2_3"
 )]
 
-# Step 4.3: Sclera Samples SARS-CoV-2 infected and mock treated ####
+# Comp. 4.3: Sclera Samples SARS-CoV-2 infected and mock treated ####
 sclera_raw_counts <- gse_164073_raw_counts_human[, c(
   "hgnc_symbol",
   "MW13_sclera_mock_1",
@@ -155,6 +153,25 @@ sclera_raw_counts <- gse_164073_raw_counts_human[, c(
   "MW18_sclera_CoV2_3"
 )]
 
+# Series 5: Fetch study GSE160435 from GEO with 1 comparisons ####
+getGEOSuppFiles("GSE160435")
+gse_160435_raw_counts_human <- as.data.frame.matrix(read.delim("GSE160435/GSE160435_count.csv.gz", sep = ","))
+colnames(gse_160435_raw_counts_human)[1] <- "hgnc_symbol"
+# Comp. 5.1:  Samples with SARS-CoV-2 infected and mock treated AT2 cells####
+AT2_raw_counts <- gse_160435_raw_counts_human[, c(
+  "hgnc_symbol",
+  "cc01.20covid1",
+  "cc01.20covid2",
+  "cc03.19covid",
+  "cc03.20covid1",
+  "cc03.20covid2",
+  
+  "cc01.20mock1",
+  "cc01.20mock2",
+  "cc03.19mock",
+  "cc03.20mock1",
+  "cc03.20mock2"
+)]
 
 # Step 1: Unify hgnc_symbol ####
 # List with all comparisons
@@ -162,7 +179,8 @@ comparisons <- list(
   NHBE_series1_raw_counts, A549_series2_raw_counts, A549_series5_raw_counts, A549_ACE2_series6_raw_counts, A549_ACE2_series16_raw_counts, Calu3_raw_count_series7, lung_biopsy_raw_counts_series15,
   hesc_derived_cardiomyocytes_raw_counts, human_cardiomyocytes_raw_counts, macrophages_raw_counts,
   gse_148697_raw_counts_human, gse_148696_raw_counts_human,
-  cornea_raw_counts, limbus_raw_counts, sclera_raw_counts
+  cornea_raw_counts, limbus_raw_counts, sclera_raw_counts,
+  AT2_raw_counts,
 )
 names(comparisons) <- c(
   "SARS-CoV-2 versus Mock infected NHBE cells",
@@ -172,11 +190,20 @@ names(comparisons) <- c(
   "SARS-CoV-2 versus Mock infected A549-ACE2 cells (Series 16)",
   "SARS-CoV-2 versus Mock infected Calu3 cells",
   "Covid 19 lung versus Healthy lung biopsy",
+  
+  "SARS-CoV-2 versus Mock infected HESC-derived cardiomyocytes cells",
+  "SARS-CoV-2 versus Mock infected Human cardiomyocytes cells",
+  "SARS-CoV-2 versus Mock infected Macrophages",
+  
   "SARS-CoV-2 versus Mock infected HPSC-derived lung organoids",
+  
   "SARS-CoV-2 versus Mock infected HPSC-derived colonic organoids",
+  
   "SARS-CoV-2 versus Mock infected Cornea sample",
   "SARS-CoV-2 versus Mock infected Limbus sample",
-  "SARS-CoV-2 versus Mock infected Sclera sample"
+  "SARS-CoV-2 versus Mock infected Sclera sample",
+  
+  "SARS-CoV-2 versus Mock infected AT2 cells"
 )
 
 # Get ids that are available in every dataset
