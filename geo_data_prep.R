@@ -306,7 +306,8 @@ saveRDS(dds_list, "use_case_data/geo_data/data/DESeq2_result_list.rds")
 dds_list <- readRDS("use_case_data/geo_data/data/DESeq2_result_list.rds")
 volcanos <- list()
 degs_deseq_list <- list()
-fc_cutoff <- 1
+# TODO
+fc_cutoff <- 2
 pCutoff <- 0.001
 j <- 1
 while (j <= length(dds_list)) {
@@ -337,14 +338,17 @@ while (j <= length(dds_list)) {
 names(volcanos) <- names(dds_list)
 names(degs_deseq_list) <- names(dds_list)
 for (i in c(1:length(volcanos))) {
-  ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos/", "LFC1_P0,001/", names(volcanos)[i], ".png"))
+  # TODO
+  ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos_upset/", "LFC2_P0,001/", names(volcanos)[i], ".png"), width = 9.5, height = 7)
 }
 
 grid <- ggarrange(plotlist = volcanos[1:9], ncol = 3, nrow = 3)
-ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos/LFC0,5_P0,001/grid_1_9.png", width = 30, height = 30)
+# TODO
+ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/grid_1_9.png", width = 30, height = 30)
 
 grid <- ggarrange(plotlist = volcanos[10:19], ncol = 3, nrow = 4)
-ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos/LFC0,5_P0,001/grid_10_19.png", width = 30, height = 30)
+# TODO
+ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/grid_10_19.png", width = 30, height = 30)
 
 # Step 4: Create indicator matrix  ####
 indicator_matrix <- data.frame(hgnc_symbol = ids)
@@ -352,19 +356,26 @@ indicator_matrix <- data.frame(hgnc_symbol = ids)
 for (i in c(1:length(degs_deseq_list))) {
   indicator_matrix[names(degs_deseq_list)[i]] <- ifelse(indicator_matrix$hgnc_symbol %in% unlist(degs_deseq_list[i]), 1, 0)
 }
-colnames(indicator_matrix)[-1][1:7] <- paste0(colnames(indicator_matrix)[-1][1:7], " - GSE147507")
-colnames(indicator_matrix)[-1][8:10] <- paste0(colnames(indicator_matrix)[-1][8:10], " - GSE151879")
-colnames(indicator_matrix)[-1][11] <- paste0(colnames(indicator_matrix)[-1][11], " - GSE148696")
-colnames(indicator_matrix)[-1][12:14] <- paste0(colnames(indicator_matrix)[-1][12:14], " - GSE164073")
-colnames(indicator_matrix)[-1][15] <- paste0(colnames(indicator_matrix)[-1][15], " - GSE160435")
-colnames(indicator_matrix)[-1][16:17] <- paste0(colnames(indicator_matrix)[-1][16:17], " - GSE157852")
-colnames(indicator_matrix)[-1][18] <- paste0(colnames(indicator_matrix)[-1][18], " - GSE152075")
-colnames(indicator_matrix)[-1][19] <- paste0(colnames(indicator_matrix)[-1][19], " - GSE150392")
+colnames(indicator_matrix)[-1][1:7] <- paste0(colnames(indicator_matrix)[-1][1:7])
+colnames(indicator_matrix)[-1][8:10] <- paste0(colnames(indicator_matrix)[-1][8:10])
+colnames(indicator_matrix)[-1][11] <- paste0(colnames(indicator_matrix)[-1][11])
+colnames(indicator_matrix)[-1][12:14] <- paste0(colnames(indicator_matrix)[-1][12:14])
+colnames(indicator_matrix)[-1][15] <- paste0(colnames(indicator_matrix)[-1][15])
+colnames(indicator_matrix)[-1][16:17] <- paste0(colnames(indicator_matrix)[-1][16:17])
+colnames(indicator_matrix)[-1][18] <- paste0(colnames(indicator_matrix)[-1][18])
+colnames(indicator_matrix)[-1][19] <- paste0(colnames(indicator_matrix)[-1][19])
+colnames(indicator_matrix) <- str_replace(colnames(indicator_matrix), pattern = "SARS-CoV-2", replacement = "S2")
+colnames(indicator_matrix) <- str_replace(colnames(indicator_matrix),pattern = "Mock infected", replacement = "MI")
+# TODO
+saveRDS(indicator_matrix, "use_case_data/geo_data/data/indicator_matrix_lfc2_p0,001.rds")
 
-upset(indicator_matrix,
-  sets = colnames(indicator_matrix)[-1],
-  sets.bar.color = "#56B4E9",
-  order.by = "freq",
-  empty.intersections = "on",
-  keep.order = TRUE,
-)
+upset_plot <- upset(indicator_matrix[,c(2:20)],
+  sets = colnames(indicator_matrix)[c(2:20)],
+  sets.x.label = "Number of differentially expressed genes \nin the dataset",
+  main.bar.color = "black",
+  sets.bar.color = "blue",
+  order.by = "freq")
+# TODO
+pdf(file="~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/upset.pdf", width = 10, height = 7) # or other device
+upset_plot
+dev.off()
