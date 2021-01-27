@@ -13,10 +13,10 @@ visualize_result(ines_result)
 visualize_result(glone_result)
 
 # Step 4: Compare results ####
-df <- plot_union_network_comparison(result = result)
+df <- plot_union_network_comparison(result = ines_result)
 df_select <- df[df$avgDiffExp > 30 & df$numNodes > 15, ]
 # Scatterplot
-union_network_comparison# <- ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
+union_network_comparison <- ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
 geom_point(aes(col = config, size = avgDiffExp)) +
   geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
   geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0) +
