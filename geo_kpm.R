@@ -21,4 +21,4 @@ kpm_options(
 )
 
 innes_results_sars_cov_2_lfc1_p0001 <- kpm(graph = human_biogrid_network, indicator_matrices = counts_matrix_lfc1_p0001)
-saveRDS(innes_results_sars_cov_2_lfc1_p0001, "use_case_data/geo_data/kpm_results/innes_results_sars_cov_2_lfc1_p0001.rds")
+saveRDS(innes_results_sars_cov_2_lfc1_p0001, "use_case_data/geo_data/kpm_results/lfc1_p0,001/INES/innes_results_sars_cov_2_lfc1_p0001.rds")
