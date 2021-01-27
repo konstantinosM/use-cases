@@ -17,7 +17,7 @@ kpm_options(
   l_max = 10,
   k_min = 1,
   k_step = 1,
-  k_max = 1
+  k_max = 10
 )
 
 innes_results_sars_cov_2_lfc1_p0001 <- kpm(graph = human_biogrid_network, indicator_matrices = counts_matrix_lfc1_p0001)
