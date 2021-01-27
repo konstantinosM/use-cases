@@ -379,3 +379,19 @@ upset_plot <- upset(indicator_matrix[,c(2:20)],
 pdf(file="~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/upset.pdf", width = 10, height = 7) # or other device
 upset_plot
 dev.off()
+
+# Step 5: Prepare biological interaction network ###
+human_biogrid_network <- findInteractionList(organism = "human", idType = "Official")
+# KeyPathwayMineR support two types of input either a sif file or an iGraph object
+# For this use case we will utilize iGraph objects
+from <- c()
+to <- c()
+for (entry in human_biogrid_network) {
+  from <- c(from, rep(entry$name, length(entry$interactors)))
+  to <- c(to, entry$interactors)
+}
+edges <- data.frame(from = from, to = to)
+human_biogrid_network <- graph_from_data_frame(d = edges, directed = FALSE)
+# Remove duplicate edges and loops
+human_biogrid_network <- simplify(human_biogrid_network)
+saveRDS(human_biogrid_network, "use_case_data/geo_data/graphs/human_biogrid_network.rds")
