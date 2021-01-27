@@ -1,14 +1,18 @@
 devtools::load_all("../keypathwayminer-R/")
 .jaddClassPath("../keypathwayminer-R/inst/java/keypathwayminer-standalone-5.0.jar")
-# Step 1: Get results and computepathway statistics ####
-result <- readRDS(file ="use_case_data/geo_data/kpm_results/lfc1_p0,001/INES/innes_results_sars_cov_2_lfc1_p0001.rds")
-# Compute pathway statistics
+# Step 1: Get results ####
+ines_result <- readRDS(file ="use_case_data/geo_data/kpm_results/lfc1_p0,001/INES/innes_greedy_results_sars_cov_2_lfc1_p0001.rds")
+glone_result <- readRDS(file ="use_case_data/geo_data/kpm_results/lfc1_p0,001/GLONE/glone_greedy_results_sars_cov_2_lfc1_p0001.rds")
 indicator_matrix <-  readRDS("use_case_data/geo_data/data/indicator_matrix_lfc1_p0,001.rds")
-result <- pathway_statistics(indicator_matrix = indicator_matrix, result = result)
-# Step 2: Visualize and compare results ####
-# Shiny
-visualize_result(result)
+# Step 2: Compute pathway statistics ####
+ines_result <- pathway_statistics(indicator_matrix = indicator_matrix, result = ines_result)
+glone_result <- pathway_statistics(indicator_matrix = indicator_matrix, result = glone_result)
 
+# Step 3: Visualize and browse results with shiny####
+visualize_result(ines_result)
+visualize_result(glone_result)
+
+# Step 4: Compare results ####
 df <- plot_union_network_comparison(result = result)
 df_select <- df[df$avgDiffExp > 30 & df$numNodes > 15, ]
 # Scatterplot

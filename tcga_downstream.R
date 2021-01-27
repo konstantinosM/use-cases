@@ -1,10 +1,10 @@
 devtools::load_all("../keypathwayminer-R/")
 .jaddClassPath("../keypathwayminer-R/inst/java/keypathwayminer-standalone-5.0.jar")
 # Step 1: Get results and computepathway statistics ####
-files <- list.files(path = "use_case_data/gdc_data/kpm_results/")
+files <- list.files(path = "use_case_data/gdc_data/kpm_results/z_score_3/")
 results <- list()
 for (file in (files)) {
-  results <- c(results, readRDS(file = paste0("use_case_data/gdc_data/kpm_results/", file))@configurations)
+  results <- c(results, readRDS(file = paste0("use_case_data/gdc_data/kpm_results/z_score_3/", file))@configurations)
 }
 # Save pathways from several runs in a Result object
 result <- new("Result", configurations = results, parameters = list(computed_pathways = 20))
