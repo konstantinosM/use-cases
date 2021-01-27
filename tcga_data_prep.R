@@ -1,4 +1,4 @@
-source("install_and_load.R")
+source("install_and_load_libraries.R")
 # For this use case we will use the TCGA-PRAD query which contains data from Prostate Adenocarcinoma patients
 # Step 1: Create query for gene expression and methylation data quantified with HTSeq from Prostate Adenocarcinoma patients ####
 query_TCGA_counts <- GDCquery(
@@ -46,7 +46,7 @@ data_solid_tissue_normal_counts <- assay(data_solid_tissue_normal_counts)
 # Merge in one matrix controls vs. disease
 # TODO counts <- merge(x = data_solid_tissue_normal_counts, y = data_primary_tumor_counts, by = "row.names") %>% column_to_rownames(var = "Row.names")
 counts <- readRDS("use_case_data/gdc_data/data/raw_counts.txt")
-# Step 5.1: DE analysis: TMM normalization and Z-score computation ####
+# Step 5: DE analysis: TMM normalization and Z-score computation ####
 # TMM normalization of raw counts using edgeR and creation of z-score matrix
 # Define contrast groups
 contrast <- c(rep("solid_tissue_normal", 52), rep("primary_tumor_counts", 498))
@@ -130,14 +130,23 @@ z_score_comparison <- ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_c
   ) +
   theme(legend.position = "top", plot.title = element_text(size = 18), text = element_text(size = 15))
 
+ggsave(filename = "~/Desktop/z_score_comparison.png", z_score_comparison, width = 14, height = 8)
+
+# Save count matrices
+# Z = 3
+counts_matrix_z_3 <- data.frame(id = z_score_matrix$STRING_id, z_score_3)
+saveRDS(counts_matrix_z_3, "use_case_data/gdc_data/data/counts_matrix_z_3.rds")
+# Z = 4
 counts_matrix_z_4 <- data.frame(id = z_score_matrix$STRING_id, z_score_4)
-ggsave(filename = "~/Desktop/z_score_4_comparison.png", z_score_comparison, width = 14, height = 8)
-# Save count matrix
 saveRDS(counts_matrix_z_4, "use_case_data/gdc_data/data/counts_matrix_z_4.rds")
 
-# Save network
+
+
+
+# Save biological network
 human_string_network <- string_db$get_graph()
 saveRDS(human_string_network, "use_case_data/gdc_data/graphs/human_string_network_800.rds")
+
 
 
 

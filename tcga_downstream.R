@@ -1,3 +1,5 @@
+devtools::load_all("../keypathwayminer-R/")
+.jaddClassPath("../keypathwayminer-R/inst/java/keypathwayminer-standalone-5.0.jar")
 # Step 1: Get results and computepathway statistics ####
 files <- list.files(path = "use_case_data/gdc_data/kpm_results/")
 results <- list()
