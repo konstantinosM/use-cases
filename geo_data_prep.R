@@ -307,7 +307,7 @@ dds_list <- readRDS("use_case_data/geo_data/data/DESeq2_result_list.rds")
 volcanos <- list()
 degs_deseq_list <- list()
 # TODO
-fc_cutoff <- 2
+fc_cutoff <- 1
 pCutoff <- 0.001
 j <- 1
 while (j <= length(dds_list)) {
@@ -368,12 +368,12 @@ colnames(indicator_matrix) <- str_replace(colnames(indicator_matrix), pattern = 
 colnames(indicator_matrix) <- str_replace(colnames(indicator_matrix),pattern = "Mock infected", replacement = "MI")
 # TODO
 saveRDS(indicator_matrix, "use_case_data/geo_data/data/indicator_matrix_lfc2_p0,001.rds")
-
+indicator_matrix <- readRDS("use_case_data/geo_data/data/indicator_matrix_lfc1_p0,001.rds")
 upset_plot <- upset(indicator_matrix[,c(2:20)],
   sets = colnames(indicator_matrix)[c(2:20)],
   sets.x.label = "Number of differentially expressed genes \nin the dataset",
   main.bar.color = "black",
-  sets.bar.color = "blue",
+  sets.bar.color = "blue",nintersects = 20,
   order.by = "freq")
 # TODO
 pdf(file="~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/upset.pdf", width = 10, height = 7) # or other device

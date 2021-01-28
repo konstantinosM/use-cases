@@ -1,0 +1,5 @@
+library(topGO)
+library(ALL)
+data(ALL)
+data(geneList)
+affyLib<-paste(annotation(ALL),"db",sep = ".")

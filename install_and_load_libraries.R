@@ -11,12 +11,14 @@ if (!requireNamespace("simpIntLists", quietly = TRUE)) BiocManager::install("sim
 if (!requireNamespace("STRINGdb", quietly = TRUE)) BiocManager::install("STRINGdb")
 if (!requireNamespace("igraph", quietly = TRUE)) install.packages("igraph")
 if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("ggalt", quietly = TRUE)) install.packages("ggalt")
 if (!requireNamespace("TCGAutils", quietly = TRUE)) BiocManager::install("TCGAutils")
 if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) BiocManager::install("TCGAbiolinks")
 if (!requireNamespace("curatedTCGAData", quietly = TRUE)) BiocManager::install("curatedTCGAData")
 if (!requireNamespace("biomaRt", quietly = TRUE)) BiocManager::install("biomaRt")
 if (!requireNamespace("UpSetR", quietly = TRUE)) install.packages("UpSetR")
 if (!requireNamespace("ggpubr", quietly = TRUE)) install.packages("ggpubr")
+if (!requireNamespace("topGO", quietly = TRUE)) BiocManager::install("topGO")
 
 
 # Load libraries
@@ -24,8 +26,10 @@ if (!requireNamespace("ggpubr", quietly = TRUE)) install.packages("ggpubr")
 library("GEOquery")
 # BioGRID interactions
 library("simpIntLists")
-# STRING interactions
+# STRING interactions and enrichment analysis
 library("STRINGdb")
+# Gene set enrichment analysis
+library("topGO")
 # To save the biological interactions
 library("igraph")
 # Differential expression analysis

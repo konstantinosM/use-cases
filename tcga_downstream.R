@@ -18,8 +18,8 @@ visualize_result(result)
 df <- plot_union_network_comparison(result = result)
 df_select <- df[df$avgDiffExp > 30 & df$numNodes > 15, ]
 # Scatterplot
-union_network_comparison# <- ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
-  geom_point(aes(col = config, size = avgDiffExp)) +
+union_network_comparison # <- ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
+geom_point(aes(col = config, size = avgDiffExp)) +
   geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
   geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0) +
   labs(
@@ -30,17 +30,17 @@ union_network_comparison# <- ggplot(df, aes(x = numNodes, y = avgDiffExp)) +
     caption = "Encircled configurations with avg_diff_exp > 30 and num_nodes > 15",
     col = "Configurations",
     size = "Avg. DE cases per configuration"
-  )+   theme(legend.position = "right", plot.title = element_text(size = 20), text = element_text(size = 15))
+  ) + theme(legend.position = "right", plot.title = element_text(size = 20), text = element_text(size = 15))
 
-ggsave(filename = "~/Desktop/union_network_comparison.png", union_network_comparison,width = 14,height = 8)
+ggsave(filename = "~/Desktop/union_network_comparison.png", union_network_comparison, width = 14, height = 8)
 
 # Step 3: Visualize top networks ####
 top1 <- get_pathway(configuration = result@configurations[df_select$config[1]]$`K-4-L1-250`, union = TRUE)
 top2 <- get_pathway(configuration = result@configurations[df_select$config[2]]$`K-6-L1-250`, union = TRUE)
 
 top1_nodes <- top1@nodes$node
-string_db$plot_network( top1_nodes )
-top1_ENRICHMENT<-string_db$get_enrichment( top1_nodes )
+string_db$plot_network(top1_nodes)
+top1_ENRICHMENT <- string_db$get_enrichment(top1_nodes)
 
 top2_nodes <- top2@nodes$node
-string_db$plot_network( top2_nodes )
+string_db$plot_network(top2_nodes)

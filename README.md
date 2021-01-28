@@ -3,10 +3,12 @@
  
  Every use case was divided into three scripts:
  
-  _data_prep.R,
+  _data_prep.R prepare data for KPM
   
-  _kpm.R,
+  _kpm.R runs KPM
   
-  _downstream.R
+  _comparison.R compares KPM results and chooses best result
+  
+  _downstream.R Downstream analysis after KPM
   
   
