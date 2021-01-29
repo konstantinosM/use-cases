@@ -1,8 +1,3 @@
----
-output:
-  word_document: default
-  html_document: default
----
 # Use-cases
  Uses cases for KeyPathwayMineR.
  
