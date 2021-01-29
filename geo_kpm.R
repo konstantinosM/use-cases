@@ -22,7 +22,7 @@ for (l in c(1:10)) {
 }
 
 # Save pathways from several runs in a Result object
-result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways))
+result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways, strategy = "INES"))
 
 # Save result
 saveRDS(result, "use_case_data/geo_data/kpm_results/lfc1_p0,001/INES/innes_greedy_results_sars_cov_2_lfc1_p0001.rds")
@@ -41,7 +41,6 @@ for (l in seq(20, 400, by= 20)) {
     result_list <- c(result_list, kpm(graph = human_biogrid_network, indicator_matrices = counts_matrix_lfc1_p0001)@configurations)
 }
 # Save pathways from several runs in a Result object
-result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways))
-
+result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways, strategy = "GLONE"))
 # Save result
 saveRDS(result, "use_case_data/geo_data/kpm_results/lfc1_p0,001/GLONE/glone_greedy_results_sars_cov_2_lfc1_p0001.rds")
