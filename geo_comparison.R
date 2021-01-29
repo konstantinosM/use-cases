@@ -1,6 +1,6 @@
 devtools::load_all("../keypathwayminer-R/")
 .jaddClassPath("../keypathwayminer-R/inst/java/keypathwayminer-standalone-5.0.jar")
-# Step 1: Get results ####
+# Step 1: Get KPM results ####
 ines_result <- readRDS(file = "use_case_data/geo_data/kpm_results/lfc1_p0,001/INES/innes_greedy_results_sars_cov_2_lfc1_p0001.rds")
 glone_result <- readRDS(file = "use_case_data/geo_data/kpm_results/lfc1_p0,001/GLONE/glone_greedy_results_sars_cov_2_lfc1_p0001.rds")
 indicator_matrix <- readRDS("use_case_data/geo_data/data/indicator_matrix_lfc1_p0,001.rds")

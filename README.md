@@ -1,7 +1,12 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
 # Use-cases
  Uses cases for KeyPathwayMineR.
  
- Every use case was divided into three scripts:
+ Every use case was divided into four scripts:
  
   _data_prep.R prepare data for KPM
   

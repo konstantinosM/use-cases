@@ -140,24 +140,6 @@ saveRDS(counts_matrix_z_3, "use_case_data/gdc_data/data/counts_matrix_z_3.rds")
 counts_matrix_z_4 <- data.frame(id = z_score_matrix$STRING_id, z_score_4)
 saveRDS(counts_matrix_z_4, "use_case_data/gdc_data/data/counts_matrix_z_4.rds")
 
-
-
-
 # Save biological network
 human_string_network <- string_db$get_graph()
 saveRDS(human_string_network, "use_case_data/gdc_data/graphs/human_string_network_800.rds")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
