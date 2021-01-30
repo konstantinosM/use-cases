@@ -1,0 +1,21 @@
+GO.ID      	Term                                        	Annotated 	Significant 	Expected 	classicFisher
+GO:0034097 	response to cytokine                        	1164      	12          	1.12     	1.0e-11
+GO:0002753 	cytoplasmic pattern recognition receptor... 	63        	6           	0.06     	1.6e-11
+GO:0070423 	nucleotide-binding oligomerization domai... 	35        	5           	0.03     	1.2e-10
+GO:0035872 	nucleotide-binding domain, leucine rich ... 	36        	5           	0.03     	1.4e-10
+GO:0048584 	positive regulation of response to stimu... 	2210      	13          	2.12     	7.0e-10
+GO:0070887 	cellular response to chemical stimulus      	3167      	14          	3.04     	2.3e-09
+GO:0010033 	response to organic substance               	3205      	14          	3.08     	2.8e-09
+GO:0002224 	toll-like receptor signaling pathway        	151       	6           	0.14     	3.4e-09
+GO:0033554 	cellular response to stress                 	1983      	12          	1.9      	5.3e-09
+GO:0035556 	intracellular signal transduction           	2677      	13          	2.57     	7.9e-09
+GO:0009967 	positive regulation of signal transducti... 	1596      	11          	1.53     	1.1e-08
+GO:0002221 	pattern recognition receptor signaling p... 	195       	6           	0.19     	1.6e-08
+GO:0006950 	response to stress                          	3803      	14          	3.65     	2.9e-08
+GO:0002755 	MyD88-dependent toll-like receptor signa... 	36        	4           	0.03     	3.2e-08
+GO:0002831 	regulation of response to biotic stimulu... 	396       	7           	0.38     	3.4e-08
+GO:0010647 	positive regulation of cell communicatio... 	1782      	11          	1.71     	3.6e-08
+GO:0023056 	positive regulation of signaling            	1791      	11          	1.72     	3.8e-08
+GO:0051173 	positive regulation of nitrogen compound... 	3057      	13          	2.93     	4.2e-08
+GO:0031347 	regulation of defense response              	672       	8           	0.64     	5.5e-08
+GO:0048583 	regulation of response to stimulus          	3993      	14          	3.83     	5.7e-08

@@ -43,7 +43,13 @@ classic_fs_bp <- runTest(go_data_bp, algorithm = "classic", statistic = "fisher"
 table_bp <- GenTable(go_data_bp, topNodes = 20, classicFisher = classic_fs_bp)
 kable(table_bp)
 # Subgraph of the top 5 GO terms 
+pdf(file="use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_bp.pdf")
 showSigOfNodes(go_data_bp, score(classic_fs_bp), firstSigNodes = 5, useInfo = "all")
+dev.off()
+
+# Save data
+write.table(table_bp, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_bp.tsv', row.names = F, quote=FALSE, sep='\t')
+
 ```
 ### Molecular function
 ```{r mf}
@@ -54,7 +60,12 @@ classic_fs_mf <- runTest(go_data_mf, algorithm = "classic", statistic = "fisher"
 table_mf <- GenTable(go_data_mf, classicFisher = classic_fs_mf, orderBy = "classicFisher", topNodes = 20)
 kable(table_mf)
 # Subgraph of the top 5 GO terms 
+pdf(file="use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_mf.pdf")
 showSigOfNodes(go_data_mf, score(classic_fs_mf), firstSigNodes = 5, useInfo = "all")
+dev.off()
+# Save data
+write.table(table_mf, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_mf.tsv', row.names = F, quote=FALSE, sep='\t')
+
 ```
 ### Cellular compartment
 ```{r cc}
@@ -65,7 +76,11 @@ classic_fs_cc <- runTest(go_data_cc, algorithm = "classic", statistic = "fisher"
 table_cc <- GenTable(go_data_cc, classicFisher = classic_fs_cc, orderBy = "classicFisher", topNodes = 20)
 kable(table_cc)
 # Subgraph of the top 5 GO terms 
+pdf(file="use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_cc.pdf")
 showSigOfNodes(go_data_cc, score(classic_fs_cc), firstSigNodes = 5, useInfo = "all")
+dev.off()
+# Save data
+write.table(table_cc, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_cc.tsv', row.names = F, quote=FALSE, sep='\t')
 ```
 
 
