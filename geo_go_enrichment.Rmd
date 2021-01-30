@@ -1,0 +1,71 @@
+---
+title: "Gene ontology enrichment"
+author: "Konstantinos Mechteridis"
+date: "1/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("topGO")
+library("AnnotationFuncs")
+library("org.Hs.eg.db")
+library("Rgraphviz")
+library("knitr")
+```
+
+## Load data
+```{r loadData}
+indicator_matrix <- readRDS("use_case_data/geo_data/data/indicator_matrix_lfc1_p0,001.rds")
+pathwaysoi_ines <- readRDS(file = "use_case_data/geo_data/comparison/selected_ines_pathways.rds")
+pathwaysoi_glone <- readRDS(file = "use_case_data/geo_data/comparison/selected_glone_pathways.rds")
+```
+
+## Gene to GO mapping
+```{r annotation}
+gene_universe <- indicator_matrix$hgnc_symbol
+GOs <- translate(gene_universe, from = org.Hs.egALIAS2EG, to = org.Hs.egGO)
+```
+## Select pathway of interest
+```{r pathwayoii}
+pathway <- pathwaysoi_ines$`K-3-L1-10`
+myIntersetingGenes <- pathway@nodes$node
+geneList <- factor(as.integer(gene_universe %in% myIntersetingGenes))
+names(geneList) <- gene_universe
+```
+## Gene ontology enrichment analysis
+### Biological process
+```{r bp}
+go_data_bp <- new("topGOdata", ontology = "BP", allGenes = geneList, annot = annFUN.gene2GO, gene2GO = GOs)
+# Run enrichment tests
+classic_fs_bp <- runTest(go_data_bp, algorithm = "classic", statistic = "fisher")
+# Save in table
+table_bp <- GenTable(go_data_bp, topNodes = 20, classicFisher = classic_fs_bp)
+kable(table_bp)
+# Subgraph of the top 5 GO terms 
+showSigOfNodes(go_data_bp, score(classic_fs_bp), firstSigNodes = 5, useInfo = "all")
+```
+### Molecular function
+```{r mf}
+go_data_mf <- new("topGOdata", ontology = "MF", allGenes = geneList, annot = annFUN.gene2GO, gene2GO = GOs)
+# Run enrichment tests
+classic_fs_mf <- runTest(go_data_mf, algorithm = "classic", statistic = "fisher")
+# Save in table
+table_mf <- GenTable(go_data_mf, classicFisher = classic_fs_mf, orderBy = "classicFisher", topNodes = 20)
+kable(table_mf)
+# Subgraph of the top 5 GO terms 
+showSigOfNodes(go_data_mf, score(classic_fs_mf), firstSigNodes = 5, useInfo = "all")
+```
+### Cellular compartment
+```{r cc}
+go_data_cc <- new("topGOdata", ontology = "CC" , allGenes = geneList, annot = annFUN.gene2GO, gene2GO = GOs)
+# Run enrichment tests
+classic_fs_cc <- runTest(go_data_cc, algorithm = "classic", statistic = "fisher")
+# Save in table
+table_cc <- GenTable(go_data_cc, classicFisher = classic_fs_cc, orderBy = "classicFisher", topNodes = 20)
+kable(table_cc)
+# Subgraph of the top 5 GO terms 
+showSigOfNodes(go_data_cc, score(classic_fs_cc), firstSigNodes = 5, useInfo = "all")
+```
+
+

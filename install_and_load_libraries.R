@@ -1,5 +1,5 @@
 # Step 0: Install and load required packages ####
-# Install packages
+# Install packages ####
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 if (!requireNamespace("DESeq2", quietly = TRUE)) BiocManager::install("DESeq2")
 if (!requireNamespace("edgeR", quietly = TRUE)) BiocManager::install("edgeR")
@@ -21,9 +21,10 @@ if (!requireNamespace("ggpubr", quietly = TRUE)) install.packages("ggpubr")
 if (!requireNamespace("topGO", quietly = TRUE)) BiocManager::install("topGO")
 if (!requireNamespace("org.Bt.eg.db", quietly = TRUE)) BiocManager::install("org.Bt.eg.db")
 if (!requireNamespace("AnnotationFuncs", quietly = TRUE)) BiocManager::install("AnnotationFuncs")
+BiocManager::install("org.Hs.eg.db")
+BiocManager::install("Rgraphviz")
 
-
-# Load libraries
+# Load libraries ####
 # Gene expression datasets
 library("GEOquery")
 # BioGRID interactions
@@ -51,4 +52,6 @@ library("TCGAbiolinks")
 library("curatedTCGAData")
 # Convert Ensembl ids to hgnc symbols
 library("biomaRt")
-
+# Annotation functions
+library("AnnotationFuncs")
+library("org.Hs.eg.db")

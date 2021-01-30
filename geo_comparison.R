@@ -8,10 +8,6 @@ indicator_matrix <- readRDS("use_case_data/geo_data/data/indicator_matrix_lfc1_p
 ines_result <- pathway_statistics(indicator_matrix = indicator_matrix, result = ines_result)
 glone_result <- pathway_statistics(indicator_matrix = indicator_matrix, result = glone_result)
 # Step 3: Visualize and browse results with shiny####
-ines <- readRDS(file = "use_case_data/geo_data/kpm_results/old/z_score_50_ines_results_lung_biopsy.rds")
-ines@parameters$strategy = "GLONE"
-visualize_result(ines)
-
 visualize_result(ines_result)
 visualize_result(glone_result)
 # Step 4.1: Compare netwroks INES ####
