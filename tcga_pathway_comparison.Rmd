@@ -45,7 +45,7 @@ z_score_4_results <- pathway_statistics(indicator_matrix = z_score_4_indicator_m
 
 ## Compare union networks, and top networks of every configuration for best results
 ### Z-score 2
-```{r network_comparison_z2}
+```{r network_comparison_z2, fig.width = 10, fig.height = 6}
 comparison_z_score_2 <- pathway_comparison_plots(z_score_2_results)
 # Top pathway comparison ####
   tpcPlot <- comparison_z_score_2$top_pathway_comparison$plot
@@ -78,7 +78,7 @@ comparison_z_score_2 <- pathway_comparison_plots(z_score_2_results)
 ```
 
 ### Z-score 3
-```{r network_comparison_z3}
+```{r network_comparison_z3, fig.width = 10, fig.height = 6}
 comparison_z_score_3 <- pathway_comparison_plots(z_score_3_results)
 # Top pathway comparison ####
   tpcPlot <- comparison_z_score_3$top_pathway_comparison$plot
@@ -109,7 +109,7 @@ comparison_z_score_3 <- pathway_comparison_plots(z_score_3_results)
   #ggsave(filename = "~/Desktop/plots/tcga/z_score_3/union_network_comparison_z3.png", uncPlot, width = 14, height = 8)
 ```
 ### Z-score 4
-```{r network_comparison_z4}
+```{r network_comparison_z4, fig.width = 10, fig.height = 6}
 comparison_z_score_4 <- pathway_comparison_plots(z_score_4_results)
 # Top pathway comparison ####
   tpcPlot <- comparison_z_score_4$top_pathway_comparison$plot
@@ -134,7 +134,6 @@ comparison_z_score_4 <- pathway_comparison_plots(z_score_4_results)
 
 ## Select pathway of interest for further analysis
 ```{r pathway_of_innterest}
-z_score_2_results@configurations$`K-3-L1-250`
 selected_pathway <- get_pathway(configuration = z_score_2_results@configurations$`K-3-L1-250`, pathway_name = "Pathway-1")
 saveRDS(selected_pathway, file = "use_case_data/gdc_data/pathway_comparison/selected_pathway_z2.rds")
 ```

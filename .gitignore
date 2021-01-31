@@ -45,3 +45,8 @@ results/
 GDCdata/
 GSE147507/
 GSE*/
+
+# R markdown files
+*.html
+
+

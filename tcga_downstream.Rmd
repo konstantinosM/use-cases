@@ -1,0 +1,43 @@
+---
+title: "TCGA Enrichment Analysis"
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("STRINGdb")
+```
+
+
+
+## Load data
+```{r loadData}
+pathway <- readRDS(file = "use_case_data/gdc_data/pathway_comparison/selected_pathway_z2.rds")
+string_db <- STRINGdb$new(version = "11",
+                          species = 9606, 
+                          input_directory = "",
+                          score_threshold = 800)
+```
+
+
+
+
+
+
+
+## Visualize pathway
+```{r visualize_pathway}
+# Step 3: Visualize top networks ####
+read
+top1 <- get_pathway(configuration = result@configurations[df_select$config[1]]$`K-4-L1-250`, union = TRUE)
+top2 <- get_pathway(configuration = result@configurations[df_select$config[2]]$`K-6-L1-250`, union = TRUE)
+
+top1_nodes <- top1@nodes$node
+string_db$plot_network(top1_nodes)
+top1_ENRICHMENT <- string_db$get_enrichment(top1_nodes)
+
+top2_nodes <- top2@nodes$node
+string_db$plot_network(top2_nodes)
+```
+
