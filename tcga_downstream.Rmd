@@ -28,9 +28,30 @@ string_db <- STRINGdb$new(
 ## Visualize pathway
 ```{r visualize_pathway,fig.height = 6}
 pathway_matrix <- z_score_matrix[z_score_matrix$STRING_id %in% pathway, ]
+row.names(pathway_matrix) <- NULL
 pathway_matrix <- tibble::column_to_rownames(pathway_matrix, var = "STRING_id")
-rowMeans(pathway_matrix[-1])
+pathway <- data.frame(STRING_id = row.names(pathway_matrix), z_score_mean = rowMeans(pathway_matrix[-1]))
+
+row_means <- string_db$add_diff_exp_color(row_means, logFcColStr = "z_score_mean")
+
+
+payload_id <- string_db$post_payload(row_means$STRING_id,colors = row_means$color)
+
+
+string_db$plot_network(row_means$STRING_id,payload_id = payload_id)
+string_db$ppi_enrichment(row_means$STRING_id)
+
+string_db$add_proteins_description(row_means)
 pdf(file = "use_case_data/tcga_data/plots/z_score_2/K-3-L1-250.pdf", width = 6, height = 7)
 string_db$plot_network(pathway$`K-3-L1-250`@nodes$node)
 dev.off()
 ```
+
+```{r}
+data("diff_exp_example1")
+example1_mapped <- string_db$map(diff_exp_example1,"gene",removeUnmappedRows = TRUE)
+hits <- example1_mapped$STRING_id[1:200]
+string_db$plot_network(hits)
+example1_mapped_pval05<-string_db$add_diff_exp_color(subset(example1_mapped, pvalue<0.05),logFcColStr = "logFC")
+```
+
