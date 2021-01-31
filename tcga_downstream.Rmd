@@ -13,31 +13,24 @@ library("STRINGdb")
 
 ## Load data
 ```{r loadData}
-pathway <- readRDS(file = "use_case_data/gdc_data/pathway_comparison/selected_pathway_z2.rds")
-string_db <- STRINGdb$new(version = "11",
-                          species = 9606, 
-                          input_directory = "",
-                          score_threshold = 800)
+pathway <- readRDS(file = "use_case_data/tcga_data/pathway_comparison/selected_pathway_z2.rds")
+pathway <- pathway$`K-3-L1-250`@nodes$node
+z_score_matrix <- readRDS("use_case_data/tcga_data/data/string_z_score_counts.rds")
+string_db <- STRINGdb$new(
+  version = "11",
+  species = 9606,
+  input_directory = "stringdb800/",
+  score_threshold = 800
+)
 ```
-
-
-
-
-
 
 
 ## Visualize pathway
-```{r visualize_pathway}
-# Step 3: Visualize top networks ####
-read
-top1 <- get_pathway(configuration = result@configurations[df_select$config[1]]$`K-4-L1-250`, union = TRUE)
-top2 <- get_pathway(configuration = result@configurations[df_select$config[2]]$`K-6-L1-250`, union = TRUE)
-
-top1_nodes <- top1@nodes$node
-string_db$plot_network(top1_nodes)
-top1_ENRICHMENT <- string_db$get_enrichment(top1_nodes)
-
-top2_nodes <- top2@nodes$node
-string_db$plot_network(top2_nodes)
+```{r visualize_pathway,fig.height = 6}
+pathway_matrix <- z_score_matrix[z_score_matrix$STRING_id %in% pathway, ]
+pathway_matrix <- tibble::column_to_rownames(pathway_matrix, var = "STRING_id")
+rowMeans(pathway_matrix[-1])
+pdf(file = "use_case_data/tcga_data/plots/z_score_2/K-3-L1-250.pdf", width = 6, height = 7)
+string_db$plot_network(pathway$`K-3-L1-250`@nodes$node)
+dev.off()
 ```
-

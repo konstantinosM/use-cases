@@ -45,7 +45,7 @@ data_solid_tissue_normal_counts <- GDCprepare(query_solid_tissue_normal_counts)
 data_solid_tissue_normal_counts <- assay(data_solid_tissue_normal_counts)
 # Merge in one matrix controls vs. disease
 # TODO counts <- merge(x = data_solid_tissue_normal_counts, y = data_primary_tumor_counts, by = "row.names") %>% column_to_rownames(var = "Row.names")
-counts <- readRDS("use_case_data/gdc_data/data/raw_counts.rds")
+counts <- readRDS("use_case_data/tcga_data/data/raw_counts.rds")
 # Step 5: DE analysis: TMM normalization and Z-score computation ####
 # TMM normalization of raw counts using edgeR and creation of z-score matrix
 # Define contrast groups
@@ -65,7 +65,7 @@ norm_counts <- norm_counts[keep, ]
 
 # Compute z-score of case samples
 # TODO z_score_matrix <- compute_z_scores(norm_counts, controls = c(1:52), cases = c(53:550))
-z_score_matrix <- readRDS("use_case_data/gdc_data/data/z_score_counts.rds")
+z_score_matrix <- readRDS("use_case_data/tcga_data/data/z_score_counts.rds")
 # Since we are going to use the STRING interaction network in this use cases we need to
 # substitute the EnsemblIDS with STRING ids
 z_score_matrix <- tibble::rownames_to_column(data.frame(z_score_matrix))
@@ -81,7 +81,7 @@ z_score_matrix <- string_db$map(my_data_frame = z_score_matrix,
 z_score_matrix["rowname"] <- NULL
 # Move STRING_ids to first column
 z_score_matrix <- z_score_matrix[, c(499, (1:ncol(z_score_matrix))[-499])]
-
+saveRDS(z_score_matrix, file = "use_case_data/tcga_data/data/string_z_score_counts.rds")
 # Step 6: Determine optimal cutoff ####
 z_score_1.5 <- z_score_matrix[-1]
 z_score_2 <- z_score_matrix[-1]
@@ -133,14 +133,14 @@ z_score_comparison <- ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_c
 # Save count matrices
 # Z = 2
 counts_matrix_z_2 <- data.frame(id = z_score_matrix$STRING_id, z_score_2)
-saveRDS(counts_matrix_z_2, "use_case_data/gdc_data/data/counts_matrix_z_2.rds")
+saveRDS(counts_matrix_z_2, "use_case_data/tcga_data/data/counts_matrix_z_2.rds")
 # Z = 3
 counts_matrix_z_3 <- data.frame(id = z_score_matrix$STRING_id, z_score_3)
-saveRDS(counts_matrix_z_3, "use_case_data/gdc_data/data/counts_matrix_z_3.rds")
+saveRDS(counts_matrix_z_3, "use_case_data/tcga_data/data/counts_matrix_z_3.rds")
 # Z = 4
 counts_matrix_z_4 <- data.frame(id = z_score_matrix$STRING_id, z_score_4)
-saveRDS(counts_matrix_z_4, "use_case_data/gdc_data/data/counts_matrix_z_4.rds")
+saveRDS(counts_matrix_z_4, "use_case_data/tcga_data/data/counts_matrix_z_4.rds")
 
 # Save biological network
 human_string_network <- string_db$get_graph()
-saveRDS(human_string_network, "use_case_data/gdc_data/graphs/human_string_network_800.rds")
+saveRDS(human_string_network, "use_case_data/tcga_data/graphs/human_string_network_800.rds")

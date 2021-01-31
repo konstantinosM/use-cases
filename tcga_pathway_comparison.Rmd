@@ -134,6 +134,6 @@ comparison_z_score_4 <- pathway_comparison_plots(z_score_4_results)
 
 ## Select pathway of interest for further analysis
 ```{r pathway_of_innterest}
-selected_pathway <- get_pathway(configuration = z_score_2_results@configurations$`K-3-L1-250`, pathway_name = "Pathway-1")
+selected_pathway <- list("K-3-L1-250" = get_pathway(configuration = z_score_2_results@configurations$`K-3-L1-250`, pathway_name = "Pathway-1"))
 saveRDS(selected_pathway, file = "use_case_data/gdc_data/pathway_comparison/selected_pathway_z2.rds")
 ```
