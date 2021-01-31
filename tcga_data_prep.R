@@ -45,7 +45,7 @@ data_solid_tissue_normal_counts <- GDCprepare(query_solid_tissue_normal_counts)
 data_solid_tissue_normal_counts <- assay(data_solid_tissue_normal_counts)
 # Merge in one matrix controls vs. disease
 # TODO counts <- merge(x = data_solid_tissue_normal_counts, y = data_primary_tumor_counts, by = "row.names") %>% column_to_rownames(var = "Row.names")
-counts <- readRDS("use_case_data/gdc_data/data/raw_counts.txt")
+counts <- readRDS("use_case_data/gdc_data/data/raw_counts.rds")
 # Step 5: DE analysis: TMM normalization and Z-score computation ####
 # TMM normalization of raw counts using edgeR and creation of z-score matrix
 # Define contrast groups
@@ -65,17 +65,15 @@ norm_counts <- norm_counts[keep, ]
 
 # Compute z-score of case samples
 # TODO z_score_matrix <- compute_z_scores(norm_counts, controls = c(1:52), cases = c(53:550))
-z_score_matrix <- readRDS("use_case_data/gdc_data/data/z_score_counts.txt")
-
+z_score_matrix <- readRDS("use_case_data/gdc_data/data/z_score_counts.rds")
 # Since we are going to use the STRING interaction network in this use cases we need to
 # substitute the EnsemblIDS with STRING ids
-z_score_matrix <- rownames_to_column(data.frame(z_score_matrix))
+z_score_matrix <- tibble::rownames_to_column(data.frame(z_score_matrix))
 # Define which graph to use. In our case we will use 9606(Homo sapiens) version 11
 string_db <- STRINGdb$new(version = "11",
                           species = 9606, 
                           input_directory = "",
-                          score_threshold = 800
-                          )
+                          score_threshold = 800)
 
 z_score_matrix <- string_db$map(my_data_frame = z_score_matrix,
                                 my_data_frame_id_col_names = "rowname",
@@ -130,9 +128,12 @@ z_score_comparison <- ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_c
   ) +
   theme(legend.position = "top", plot.title = element_text(size = 18), text = element_text(size = 15))
 
-ggsave(filename = "~/Desktop/z_score_comparison.png", z_score_comparison, width = 14, height = 8)
+#ggsave(filename = "~/Desktop/z_score_comparison.png", z_score_comparison, width = 14, height = 8)
 
 # Save count matrices
+# Z = 2
+counts_matrix_z_2 <- data.frame(id = z_score_matrix$STRING_id, z_score_2)
+saveRDS(counts_matrix_z_2, "use_case_data/gdc_data/data/counts_matrix_z_2.rds")
 # Z = 3
 counts_matrix_z_3 <- data.frame(id = z_score_matrix$STRING_id, z_score_3)
 saveRDS(counts_matrix_z_3, "use_case_data/gdc_data/data/counts_matrix_z_3.rds")
