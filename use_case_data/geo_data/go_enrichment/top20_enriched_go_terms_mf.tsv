@@ -1,21 +1,21 @@
-GO.ID	Term	Annotated	Significant	Expected	Rank in classicKS	classicFisher	classicKS
-GO:0000978	RNA polymerase II cis-regulatory region ...	1071	7	1	26	2.4e-05	0.00134
-GO:0000987	cis-regulatory region sequence-specific ...	1095	7	1.03	27	2.7e-05	0.00180
-GO:0000977	RNA polymerase II transcription regulato...	1331	7	1.25	22	9.6e-05	0.00086
-GO:0042802	identical protein binding	1867	8	1.75	2889	0.00010	0.68219
-GO:0000981	DNA-binding transcription factor activit...	1411	7	1.32	165	0.00014	0.04077
-GO:0000976	transcription regulatory region sequence...	1423	7	1.33	28	0.00015	0.00183
-GO:0001067	regulatory region nucleic acid binding	1424	7	1.33	32	0.00015	0.00204
-GO:0003700	DNA-binding transcription factor activit...	1470	7	1.38	117	0.00018	0.02344
-GO:1990837	sequence-specific double-stranded DNA bi...	1524	7	1.43	123	0.00023	0.02484
-GO:0003690	double-stranded DNA binding	1598	7	1.5	173	0.00031	0.04450
-GO:0043565	sequence-specific DNA binding	1638	7	1.54	50	0.00036	0.00730
-GO:0003677	DNA binding	2310	8	2.17	76	0.00046	0.01301
-GO:0001784	phosphotyrosine residue binding	42	2	0.04	1451	0.00069	0.34904
-GO:0140110	transcription regulator activity	1909	7	1.79	54	0.00092	0.00928
-GO:0001228	DNA-binding transcription activator acti...	505	4	0.47	2108	0.00101	0.49923
-GO:0001216	DNA-binding transcription activator acti...	508	4	0.48	2178	0.00104	0.51677
-GO:0045309	protein phosphorylated amino acid bindin...	56	2	0.05	1978	0.00123	0.46939
-GO:0098772	molecular function regulator	3628	9	3.4	1102	0.00203	0.26854
-GO:0019899	enzyme binding	2221	7	2.08	74	0.00228	0.01251
-GO:0003676	nucleic acid binding	3705	9	3.47	438	0.00237	0.13623
+GO.ID	Term	Annotated	Significant	Expected	classicFisher
+GO:0008009	chemokine activity	41	3	0.02	3.1e-07
+GO:0042379	chemokine receptor binding	58	3	0.02	9.0e-07
+GO:0005125	cytokine activity	231	3	0.09	5.8e-05
+GO:0048020	CCR chemokine receptor binding	36	2	0.01	7.3e-05
+GO:0005126	cytokine receptor binding	259	3	0.1	8.1e-05
+GO:0001664	G protein-coupled receptor binding	285	3	0.11	0.00011
+GO:0048018	receptor ligand activity	473	3	0.18	0.00048
+GO:0030546	signaling receptor activator activity	478	3	0.18	0.00050
+GO:0030545	receptor regulator activity	517	3	0.19	0.00062
+GO:0031731	CCR6 chemokine receptor binding	5	1	0	0.00187
+GO:0031727	CCR2 chemokine receptor binding	6	1	0	0.00225
+GO:0061578	Lys63-specific deubiquitinase activity	12	1	0	0.00449
+GO:0045236	CXCR chemokine receptor binding	17	1	0.01	0.00636
+GO:0070530	K63-linked polyubiquitin modification-de...	17	1	0.01	0.00636
+GO:0001848	complement binding	21	1	0.01	0.00785
+GO:0030021	extracellular matrix structural constitu...	23	1	0.01	0.00859
+GO:0005540	hyaluronic acid binding	27	1	0.01	0.01008
+GO:0005102	signaling receptor binding	1536	3	0.58	0.01414
+GO:0031593	polyubiquitin modification-dependent pro...	42	1	0.02	0.01565
+GO:0008233	peptidase activity	601	2	0.23	0.01911

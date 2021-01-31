@@ -1,21 +1,21 @@
 GO.ID	Term	Annotated	Significant	Expected	classicFisher
-GO:0005667	transcription regulator complex	412	5	0.38	2.5e-05
-GO:0005634	nucleus	6914	14	6.37	5.5e-05
-GO:0005654	nucleoplasm	3746	10	3.45	0.00038
-GO:0000790	nuclear chromatin	1250	6	1.15	0.00055
-GO:0032991	protein-containing complex	4814	11	4.43	0.00058
-GO:0010008	endosome membrane	480	4	0.44	0.00078
-GO:0005829	cytosol	4994	11	4.6	0.00082
-GO:0000785	chromatin	1401	6	1.29	0.00102
-GO:0005768	endosome	942	5	0.87	0.00118
-GO:0000228	nuclear chromosome	1462	6	1.35	0.00127
-GO:0017053	transcription repressor complex	79	2	0.07	0.00234
-GO:0031981	nuclear lumen	4644	10	4.28	0.00239
-GO:0098805	whole membrane	1671	6	1.54	0.00255
-GO:1990622	CHOP-ATF3 complex	3	1	0	0.00276
-GO:0035976	transcription factor AP-1 complex	4	1	0	0.00368
-GO:0005694	chromosome	1866	6	1.72	0.00448
-GO:0043231	intracellular membrane-bounded organelle	9982	14	9.19	0.00675
-GO:0035631	CD40 receptor complex	12	1	0.01	0.01100
-GO:0031974	membrane-enclosed lumen	5688	10	5.24	0.01219
-GO:0043233	organelle lumen	5688	10	5.24	0.01219
+GO:0005615	extracellular space	3027	6	1.12	4.1e-05
+GO:0005576	extracellular region	3932	6	1.45	0.0002
+GO:0033165	interphotoreceptor matrix	5	1	0	0.0018
+GO:1904724	tertiary granule lumen	55	1	0.02	0.0201
+GO:0035580	specific granule lumen	62	1	0.02	0.0226
+GO:0000323	lytic vacuole	696	2	0.26	0.0244
+GO:0005764	lysosome	696	2	0.26	0.0244
+GO:0005773	vacuole	784	2	0.29	0.0305
+GO:0001750	photoreceptor outer segment	87	1	0.03	0.0316
+GO:0043202	lysosomal lumen	94	1	0.03	0.0341
+GO:0005796	Golgi lumen	104	1	0.04	0.0377
+GO:0072562	blood microparticle	110	1	0.04	0.0398
+GO:0097733	photoreceptor cell cilium	112	1	0.04	0.0406
+GO:0097731	9+0 non-motile cilium	132	1	0.05	0.0477
+GO:0097730	non-motile cilium	156	1	0.06	0.0561
+GO:0042581	specific granule	161	1	0.06	0.0579
+GO:0070820	tertiary granule	164	1	0.06	0.0589
+GO:0005775	vacuolar lumen	173	1	0.06	0.0621
+GO:0005788	endoplasmic reticulum lumen	306	1	0.11	0.1076
+GO:0034774	secretory granule lumen	328	1	0.12	0.1149
