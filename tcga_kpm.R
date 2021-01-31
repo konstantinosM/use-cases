@@ -25,7 +25,7 @@ for (l in c(150, 200, 250)) {
   }
 }
 # Save pathways from several runs in a Result object
-result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways))
+result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways, strategy = kpm_options()$strategy))
 
 # Save result
 saveRDS(result, "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_2.rds")
@@ -49,7 +49,7 @@ saveRDS(result, "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate
 #   }
 # }
 # # Save pathways from several runs in a Result object
-# result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways))
+#result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways, strategy = kpm_options()$strategy))
 # 
 # # Save result
 # saveRDS(result, "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_3.rds")
@@ -74,7 +74,7 @@ saveRDS(result, "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate
 # }
 # 
 # # Save pathways from several runs in a Result object
-# result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways))
+# result <- new("Result", configurations = result_list, parameters = list(computed_pathways = kpm_options()$computed_pathways, strategy = kpm_options()$strategy))
 # 
 # # Save result
 # saveRDS(result, "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_4.rds")

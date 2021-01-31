@@ -12,6 +12,9 @@ library("ggalt")
 
 ## Get KPM results
 ```{r get_results}
+# Z-score = 2 ####
+z_score_2_results <- readRDS(file = "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_2.rds")
+z_score_2_indicator_matrix <- readRDS(file = "use_case_data/gdc_data/data/counts_matrix_z_2.rds") 
 # Z-score = 3 ####
 z_score_3_results <- readRDS(file = "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_3.rds")
 z_score_3_indicator_matrix <- readRDS(file = "use_case_data/gdc_data/data/counts_matrix_z_3.rds") 
@@ -22,6 +25,8 @@ z_score_4_indicator_matrix <- readRDS(file = "use_case_data/gdc_data/data/counts
 
 ## Compute pathway statistics
 ```{r pathway_statistics}
+# Z-score = 2 ####
+z_score_2_results <- pathway_statistics(indicator_matrix = z_score_2_indicator_matrix, result = z_score_2_results)
 # Z-score = 3 ####
 z_score_3_results <- pathway_statistics(indicator_matrix = z_score_3_indicator_matrix, result = z_score_3_results)
 # Z-score = 4 ####
@@ -30,13 +35,48 @@ z_score_4_results <- pathway_statistics(indicator_matrix = z_score_4_indicator_m
 
 ## Visualize and browse results with shiny
 ```{r shiny, eval = FALSE}
+# Z-score = 2 ####
+  visualize_result(z_score_2_results)
 # Z-score = 3 ####
   visualize_result(z_score_3_results)
 # Z-score = 4 ####
-visualize_result(z_score_4_results)
+  visualize_result(z_score_4_results)
 ```
 
 ## Compare union networks, and top networks of every configuration for best results
+### Z-score 2
+```{r network_comparison_z2}
+comparison_z_score_2 <- pathway_comparison_plots(z_score_2_results)
+# Top pathway comparison ####
+  tpcPlot <- comparison_z_score_2$top_pathway_comparison$plot
+  tpcData <- comparison_z_score_2$top_pathway_comparison$data
+  
+  # Select best pathways
+  df_select <- tpcData[tpcData$avgDiffExp > 250 & tpcData$numNodes > 25, ] 
+  # Encircle pathways in plot
+  tpcPlot <- tpcPlot +
+    geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
+    geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0,angle = 30) +
+    labs(caption = "Encircled configurations with avgDiffExp > 250 and numNodes > 25") 
+  tpcPlot
+  #ggsave(filename = "~/Desktop/plots/tcga/z_score_2/top_pathway_comparison_z2.png", tpcPlot, width = 14, height = 8)
+  
+# Union network comparison ####
+  uncPlot <- comparison_z_score_2$union_network_comparison$plot
+  uncData <- comparison_z_score_2$union_network_comparison$data
+  
+  # Select best pathways
+  df_select <- uncData[uncData$avgDiffExp > 215 & uncData$numNodes > 75, ] 
+  # Encircle pathways in plot
+  uncPlot <- uncPlot +
+    geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
+    geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0,angle = 30) +
+    labs(caption = "Encircled configurations with avgDiffExp > 215 and numNodes > 75") 
+  uncPlot
+  #ggsave(filename = "~/Desktop/plots/tcga/z_score_2/union_network_comparison_z2.png", uncPlot, width = 14, height = 8)
+
+```
+
 ### Z-score 3
 ```{r network_comparison_z3}
 comparison_z_score_3 <- pathway_comparison_plots(z_score_3_results)
@@ -51,8 +91,8 @@ comparison_z_score_3 <- pathway_comparison_plots(z_score_3_results)
     geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
     geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0,angle = 30) +
     labs(caption = "Encircled configurations with avgDiffExp > 140 and numNodes > 10") 
-  
-  ggsave(filename = "~/Desktop/plots/tcga/z_score_3/top_pathway_comparison_z3.png", tpcPlot, width = 14, height = 8)
+  tpcPlot
+  #ggsave(filename = "~/Desktop/plots/tcga/z_score_3/top_pathway_comparison_z3.png", tpcPlot, width = 14, height = 8)
 
 # Union network comparison ####
   uncPlot <- comparison_z_score_3$union_network_comparison$plot
@@ -64,9 +104,9 @@ comparison_z_score_3 <- pathway_comparison_plots(z_score_3_results)
   uncPlot <- uncPlot +
     geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
     geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0,angle = 30) +
-    labs(caption = "Encircled configurations with avgDiffExp > 140 and numNodes > 10") 
-  
-  ggsave(filename = "~/Desktop/plots/tcga/z_score_3/union_network_comparison_z3.png", uncPlot, width = 14, height = 8)
+    labs(caption = "Encircled configurations with avgDiffExp > 100 and numNodes > 25") 
+  uncPlot
+  #ggsave(filename = "~/Desktop/plots/tcga/z_score_3/union_network_comparison_z3.png", uncPlot, width = 14, height = 8)
 ```
 ### Z-score 4
 ```{r network_comparison_z4}
@@ -74,7 +114,8 @@ comparison_z_score_4 <- pathway_comparison_plots(z_score_4_results)
 # Top pathway comparison ####
   tpcPlot <- comparison_z_score_4$top_pathway_comparison$plot
   tpcData <- comparison_z_score_4$top_pathway_comparison$data
-ggsave(filename = "~/Desktop/plots/tcga/z_score_4/top_pathway_comparison_z4.png", tpcPlot, width = 14, height = 8)
+  tpcPlot
+#ggsave(filename = "~/Desktop/plots/tcga/z_score_4/top_pathway_comparison_z4.png", tpcPlot, width = 14, height = 8)
 
 # Union network comparison ####
   uncPlot <- comparison_z_score_4$union_network_comparison$plot
@@ -87,8 +128,13 @@ ggsave(filename = "~/Desktop/plots/tcga/z_score_4/top_pathway_comparison_z4.png"
     geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
     geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0,angle = 30) +
     labs(caption = "Encircled configurations with avgDiffExp > 100 and numNodes > 20") 
-  
-  ggsave(filename = "~/Desktop/plots/tcga/z_score_4/union_network_comparison_z4.png", uncPlot, width = 14, height = 8)
+  uncPlot
+  #ggsave(filename = "~/Desktop/plots/tcga/z_score_4/union_network_comparison_z4.png", uncPlot, width = 14, height = 8)
 ```
 
+## Select pathway of interest for further analysis
+```{r pathway_of_innterest}
+z_score_2_results@configurations$`K-3-L1-150`
+selected_pathway <- get_pathway(configuration = z_score_2_results@configurations$`K-3-L1-150`, pathway_name = "Pathway-1")
 
+```
