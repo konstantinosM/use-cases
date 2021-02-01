@@ -13,14 +13,14 @@ library("ggalt")
 ## Get KPM results
 ```{r get_results}
 # Z-score = 2 ####
-z_score_2_results <- readRDS(file = "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_2.rds")
-z_score_2_indicator_matrix <- readRDS(file = "use_case_data/gdc_data/data/counts_matrix_z_2.rds") 
+z_score_2_results <- readRDS(file = "use_case_data/tcga_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_2.rds")
+z_score_2_indicator_matrix <- readRDS(file = "use_case_data/tcga_data/data/counts_matrix_z_2.rds") 
 # Z-score = 3 ####
-z_score_3_results <- readRDS(file = "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_3.rds")
-z_score_3_indicator_matrix <- readRDS(file = "use_case_data/gdc_data/data/counts_matrix_z_3.rds") 
+z_score_3_results <- readRDS(file = "use_case_data/tcga_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_3.rds")
+z_score_3_indicator_matrix <- readRDS(file = "use_case_data/tcga_data/data/counts_matrix_z_3.rds") 
 # Z-score = 4 ####
-z_score_4_results <- readRDS(file = "use_case_data/gdc_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_4.rds")
-z_score_4_indicator_matrix <- readRDS(file = "use_case_data/gdc_data/data/counts_matrix_z_4.rds") 
+z_score_4_results <- readRDS(file = "use_case_data/tcga_data/kpm_results/ines_greedy_results_prostate_tumor_z_score_4.rds")
+z_score_4_indicator_matrix <- readRDS(file = "use_case_data/tcga_data/data/counts_matrix_z_4.rds") 
 ```
 
 ## Compute pathway statistics
@@ -135,5 +135,5 @@ comparison_z_score_4 <- pathway_comparison_plots(z_score_4_results)
 ## Select pathway of interest for further analysis
 ```{r pathway_of_innterest}
 selected_pathway <- list("K-3-L1-250" = get_pathway(configuration = z_score_2_results@configurations$`K-3-L1-250`, pathway_name = "Pathway-1"))
-saveRDS(selected_pathway, file = "use_case_data/gdc_data/pathway_comparison/selected_pathway_z2.rds")
+saveRDS(selected_pathway, file = "use_case_data/tcga_data/pathway_comparison/selected_pathway_z2.rds")
 ```
