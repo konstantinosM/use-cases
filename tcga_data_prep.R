@@ -1,6 +1,6 @@
 source("install_and_load_libraries.R")
 # For this use case we will use the TCGA-PRAD query which contains data from Prostate Adenocarcinoma patients
-# Step 1: Create query for gene expression and methylation data quantified with HTSeq from Prostate Adenocarcinoma patients ####
+# Step 1: Create query for gene expression data quantified with HTSeq from Prostate Adenocarcinoma patients ####
 query_TCGA_counts <- GDCquery(
   project = "TCGA-PRAD",
   data.category = "Transcriptome Profiling",
@@ -117,18 +117,18 @@ z_score_cutoff_comparison <- tibble(
 )
 
 z_score_comparison <- ggplot(data = z_score_cutoff_comparison, aes(x = Z_score_cutoff, y = Genes)) +
-  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_bar(stat = "identity", position = position_dodge(),fill="#8B939C") +
   geom_text(aes(label = Genes), vjust = 1.5, color = "black", position = position_dodge(0.9), size = 5) +
   labs(
     title = "Primaty tumor versus Solid tissue normal samples from prostate cancer patients",
     x = "Z-score cutoff",
     y = "Average DEGs per sample",
     subtitle = "|Z_score| > X",
-    caption = "Considering genes in the 490 primary tumor samples."
+    caption = "Considering genes in the 498 primary tumor samples."
   ) +
   theme(legend.position = "top", plot.title = element_text(size = 18), text = element_text(size = 15))
 
-#ggsave(filename = "~/Desktop/z_score_comparison.png", z_score_comparison, width = 14, height = 8)
+ggsave(filename = "~/Desktop/z_score_comparison.png", z_score_comparison, width = 14, height = 8)
 
 # Save count matrices
 # Z = 2
@@ -141,6 +141,6 @@ saveRDS(counts_matrix_z_3, "use_case_data/tcga_data/data/counts_matrix_z_3.rds")
 counts_matrix_z_4 <- data.frame(id = z_score_matrix$STRING_id, z_score_4)
 saveRDS(counts_matrix_z_4, "use_case_data/tcga_data/data/counts_matrix_z_4.rds")
 
-# Save biological network
+# Save biological network ####
 human_string_network <- string_db$get_graph()
 saveRDS(human_string_network, "use_case_data/tcga_data/graphs/human_string_network_800.rds")

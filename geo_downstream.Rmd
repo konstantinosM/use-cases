@@ -35,6 +35,38 @@ myIntersetingGenes <- pathway@nodes$node
 geneList <- factor(as.integer(gene_universe %in% myIntersetingGenes))
 names(geneList) <- gene_universe
 ```
+## Visualize pathway
+```{r visualize_pathway}
+edges <- data.frame(from = pathway@edges$source, to = pathway@edges$target)
+nodes <- data.frame(
+          id = pathway@nodes$node,
+          label = pathway@nodes$node,
+          title = paste('<a target="_blank" href = "https://www.ncbi.nlm.nih.gov/gene/?term=',
+                        pathway@nodes$node, '">Gene id: ', pathway@nodes$node, " (Visit NCBI)</a>", sep = ""))
+nodes <- cbind(nodes, group = as.character(pathway@nodes$exception))
+
+
+network <- visNetwork(main = "K-8-L1-10 union network",
+                      submain = paste0("Nodes: ", nrow(nodes),
+                                       ", Edges: ", nrow(edges),
+                                       "<br>Exception nodes: ", table(nodes$group)["TRUE"],
+                                       "<br>Avg. de cases per node: ",pathway@avg_exp), 
+                      nodes = nodes, 
+                      edges = edges) %>%
+              visGroups(groupname = "TRUE",
+                        color = "#fb8500",
+                        shape = "square",
+                        shadow = list(enabled = TRUE)) %>%
+              visGroups(groupname = "FALSE", color = "#023e8a")%>%
+  visNodes(labelHighlightBold = TRUE)
+visSave(network, "union_network.html", selfcontained = TRUE, background = "white")
+```
+
+## Heatmap
+```{r heatmap}
+lfc_2_matrix <- readRDS("use_case_data/geo_data/data/log_2_fc_tibble.rds")
+
+```
 ## Gene ontology enrichment analysis
 ### Biological process
 ```{r bp}
@@ -47,7 +79,7 @@ kable(table_bp)
 # Subgraph of the top 5 GO terms 
 
 pdf(file="use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_bp.pdf")
-showSigOfNodes(go_data_bp, score(classic_fs_bp), firstSigNodes = 5, useInfo = "all")
+showSigOfNodes(go_data_bp, score(classic_fs_bp), firstSigNodes = 10, useInfo = "all")
 dev.off()
 
 # Save data
@@ -64,7 +96,7 @@ table_mf <- GenTable(go_data_mf, classicFisher = classic_fs_mf, orderBy = "class
 kable(table_mf)
 # Subgraph of the top 5 GO terms 
 pdf(file="use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_mf.pdf")
-showSigOfNodes(go_data_mf, score(classic_fs_mf), firstSigNodes = 5, useInfo = "all")
+showSigOfNodes(go_data_mf, score(classic_fs_mf), firstSigNodes = 10, useInfo = "all")
 dev.off()
 # Save data
 write.table(table_mf, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_mf.tsv', row.names = F, quote=FALSE, sep='\t')
@@ -80,12 +112,8 @@ table_cc <- GenTable(go_data_cc, classicFisher = classic_fs_cc, orderBy = "class
 kable(table_cc)
 # Subgraph of the top 5 GO terms 
 pdf(file = "use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_cc.pdf")
-showSigOfNodes(go_data_cc, score(classic_fs_cc), firstSigNodes = 5, useInfo = "all")
+showSigOfNodes(go_data_cc, score(classic_fs_cc), firstSigNodes = 10, useInfo = "all")
 dev.off()
 # Save data
 write.table(table_cc, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_cc.tsv', row.names = F, quote=FALSE, sep='\t')
 ```
-
-
-
-

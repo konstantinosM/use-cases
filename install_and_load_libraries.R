@@ -19,7 +19,6 @@ if (!requireNamespace("biomaRt", quietly = TRUE)) BiocManager::install("biomaRt"
 if (!requireNamespace("UpSetR", quietly = TRUE)) install.packages("UpSetR")
 if (!requireNamespace("ggpubr", quietly = TRUE)) install.packages("ggpubr")
 if (!requireNamespace("topGO", quietly = TRUE)) BiocManager::install("topGO")
-if (!requireNamespace("org.Bt.eg.db", quietly = TRUE)) BiocManager::install("org.Bt.eg.db")
 if (!requireNamespace("AnnotationFuncs", quietly = TRUE)) BiocManager::install("AnnotationFuncs")
 BiocManager::install("org.Hs.eg.db")
 BiocManager::install("Rgraphviz")

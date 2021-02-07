@@ -1,12 +1,22 @@
-# SARS-CoV-2 data from GEO
-# Install and load R packages
-source("install_and_load_libraries.R")
-  # Series 1: Fetch study GSE147507 from GEO with 7 comparisons ####
-  # getGeoSuppFiles("GSE147507")
+---
+title: "GEO data preperation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("GEOquery")
+library("tibble")
+library("EnhancedVolcano")
+```
+## Step 1: Get all Series records
+### Series record 1: Fetch study GSE147507 from GEO with 7 comparisons 
+```{r series_record_1}
+# Fetch count matrix 
+getGEOSuppFiles("GSE147507")
   gse_147507_raw_counts_human <- read.delim("GSE147507/GSE147507_RawReadCounts_Human.tsv.gz")
   colnames(gse_147507_raw_counts_human)[1] <- "hgnc_symbol"
-  
-  # Comp. 1.1: Samples with SARS-CoV-2 infected NHBE cells and mock treated NHBE cells ####
+# Comp. 1.1: Samples with SARS-CoV-2 infected NHBE cells and mock treated NHBE cells ####
   NHBE_series1_raw_counts <- gse_147507_raw_counts_human[, c(
     "hgnc_symbol",
     "Series1_NHBE_Mock_1",
@@ -78,8 +88,11 @@ source("install_and_load_libraries.R")
     "Series15_COVID19Lung_2"
   )]
   
-  # Series 2: Fetch study GSE151879 from GEO with 3 comparisons####
-  # getGeoSuppFiles("GSE151879")
+```
+
+### Series record 2: Fetch study GSE151879 from GEO with 3 comparisons
+```{r series_record_2}
+  getGEOSuppFiles("GSE151879")
   # Comp. 2.8: Samples with SARS-CoV-2 infected and mock treated HESC-derived cardiomyocytes cells. ####
   hesc_derived_cardiomyocytes_raw_counts <- read.delim(file = "GSE151879/GSE151879_raw_counts_genes.hESC-derived_cardiomyocytes.txt.gz")
   # Comp. 2.9: Samples with SARS-CoV-2 infected and mock treated Human cardiomyocytes cells. ####
@@ -109,21 +122,23 @@ source("install_and_load_libraries.R")
   hesc_derived_cardiomyocytes_raw_counts <- hesc_derived_cardiomyocytes_raw_counts[hesc_derived_cardiomyocytes_raw_counts$hgnc_symbol != "", ] %>% dplyr::select(hgnc_symbol, everything())
   human_cardiomyocytes_raw_counts <- human_cardiomyocytes_raw_counts[human_cardiomyocytes_raw_counts$hgnc_symbol != "", ] %>% dplyr::select(hgnc_symbol, everything())
   macrophages_raw_counts <- macrophages_raw_counts[macrophages_raw_counts$hgnc_symbol != "", ] %>% dplyr::select(hgnc_symbol, everything())
-  
-  # Series 3,4: Fetch study GSE148697 and GSE148696 from GEO with 2 comparisons ####
-  # getGeoSuppFiles("GSE148697")
-  # getGeoSuppFiles("GSE148696")
-  # Comp. 3,4.N: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Lung organoids. GSE148697 ####
-  gse_148697_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148697/GSE148697_counts.txt.gz"))
-  colnames(gse_148697_raw_counts_human)[1] <- "hgnc_symbol"
-  # Comp. 3,4.11: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
+```
+
+### Series record 3: Fetch study GSE148696 from GEO with 1 comparisons
+```{r series_record_3}
+  getGEOSuppFiles("GSE148696")
+# Comp. 3.11: Samples with SARS-CoV-2 infected and mock treated HPSC-derived Colonic organoids. GSE148696 ####
   gse_148696_raw_counts_human <- as.data.frame.matrix(read.delim("GSE148696/GSE148696_counts.txt.gz"))
   colnames(gse_148696_raw_counts_human)[1] <- "hgnc_symbol"
-  # Series 5:Fetch study GSE164073 from GEO with 3 comparisons ####
-  # getGeoSuppFiles("GSE164073")
+  
+```
+
+### Series record 4: Fetch study GSE164073 from GEO with 3 comparisons
+```{r series_record_4}
+  getGEOSuppFiles("GSE164073")
   gse_164073_raw_counts_human <- as.data.frame.matrix(read.delim("GSE164073/GSE164073_Eye_count_matrix.csv.gz", sep = ","))
   colnames(gse_164073_raw_counts_human)[1] <- "hgnc_symbol"
-  # Comp. 5.12: Cornea Samples SARS-CoV-2 infected and mock treated ####
+# Comp. 4.12: Cornea Samples SARS-CoV-2 infected and mock treated ####
   cornea_raw_counts <- gse_164073_raw_counts_human[, c(
     "hgnc_symbol",
     "MW1_cornea_mock_1",
@@ -134,7 +149,7 @@ source("install_and_load_libraries.R")
     "MW6_cornea_CoV2_3"
   )]
   
-  # Comp. 5.13: Limbus Samples SARS-CoV-2 infected and mock treated ####
+# Comp. 4.13: Limbus Samples SARS-CoV-2 infected and mock treated ####
   limbus_raw_counts <- gse_164073_raw_counts_human[, c(
     "hgnc_symbol",
     "MW7_limbus_mock_1",
@@ -145,7 +160,7 @@ source("install_and_load_libraries.R")
     "MW12_limbus_CoV2_3"
   )]
   
-  # Comp. 5.14: Sclera Samples SARS-CoV-2 infected and mock treated ####
+# Comp. 4.14: Sclera Samples SARS-CoV-2 infected and mock treated ####
   sclera_raw_counts <- gse_164073_raw_counts_human[, c(
     "hgnc_symbol",
     "MW13_sclera_mock_1",
@@ -155,12 +170,17 @@ source("install_and_load_libraries.R")
     "MW17_sclera_CoV2_2",
     "MW18_sclera_CoV2_3"
   )]
-  
-  # Series 6: Fetch study GSE160435 from GEO with 1 comparison ####
-  # getGeoSuppFiles("GSE160435")
+```
+
+
+
+
+### Series record 5: Fetch study GSE160435 from GEO with 1 comparison 
+```{r series_record_5}
+  getGEOSuppFiles("GSE160435")
   gse_160435_raw_counts_human <- as.data.frame.matrix(read.delim("GSE160435/GSE160435_count.csv.gz", sep = ","))
   colnames(gse_160435_raw_counts_human)[1] <- "hgnc_symbol"
-  # Comp. 6.15:  Samples with SARS-CoV-2 infected and mock treated AT2 cells####
+  # Comp. 5.15:  Samples with SARS-CoV-2 infected and mock treated AT2 cells####
   AT2_raw_counts <- gse_160435_raw_counts_human[, c(
     "hgnc_symbol",
     "cc01.20mock1",
@@ -177,11 +197,14 @@ source("install_and_load_libraries.R")
   
   # Remove duplicate entries 
   AT2_raw_counts <-  AT2_raw_counts[!AT2_raw_counts$hgnc_symbol%in%AT2_raw_counts$hgnc_symbol[duplicated(AT2_raw_counts$hgnc_symbol)],]
-  
-  # Series 7: Fetch study GSE157852 from GEO with 2 comparisons ####
-  # getGeoSuppFiles("GSE157852")
+```
+
+
+### Series record 6: Fetch study GSE157852 from GEO with 2 comparisons
+```{r series_record_6}
+  getGEOSuppFiles("GSE157852")
   gse_157852_raw_counts_human <- as.data.frame.matrix(read.delim("GSE157852/GSE157852_CPO_RawCounts.txt.gz", sep = " ")) %>% rownames_to_column(var = "hgnc_symbol")
-  # Comp. 7.16:  Samples with SARS-CoV-2 infected and mock treated choroid plexus organoids cells 72 hours post infection (hpi)####
+  # Comp. 6.16:  Samples with SARS-CoV-2 infected and mock treated choroid plexus organoids cells 72 hours post infection (hpi)####
   choroid_plexus_72_raw_counts <- gse_157852_raw_counts_human[, c(
     "hgnc_symbol",
     "CPO_Mock_72hpi_S1",
@@ -191,7 +214,7 @@ source("install_and_load_libraries.R")
     "CPO_SARS.CoV.2_72hpi_S8",
     "CPO_SARS.CoV.2_72hpi_S9"
   )]
-  # Comp. 7.17:  Samples with SARS-CoV-2 infected organoids cells 24hpi and mock treated choroid plexus organoids cells 72 hpi####
+  # Comp. 6.17:  Samples with SARS-CoV-2 infected organoids cells 24hpi and mock treated choroid plexus organoids cells 72 hpi####
   choroid_plexus_24_raw_counts <- gse_157852_raw_counts_human[, c(
     "hgnc_symbol",
     "CPO_Mock_72hpi_S1",
@@ -201,29 +224,36 @@ source("install_and_load_libraries.R")
     "CPO_SARS.CoV.2_24hpi_S5",
     "CPO_SARS.CoV.2_24hpi_S6"
   )]
-  
-  # Series 8: Fetch study GSE152075 from GEO with 1 comparison ####
-  # getGeoSuppFiles("GSE152075")
+```
+
+### Series record 7: Fetch study GSE152075 from GEO with 1 comparison 
+```{r series_record_7}
+  getGEOSuppFiles("GSE152075")
   gse_152075_raw_counts_human <- as.data.frame.matrix(read.delim("GSE152075/GSE152075_raw_counts_GEO.txt.gz", sep = " ")) %>% rownames_to_column(var = "hgnc_symbol")
-  # Comp. 8.18 Nasopharyngeal swabs from 430 individuals with SARS-CoV-2 and 54 negative controls ####
+  # Comp. 7.18 Nasopharyngeal swabs from 430 individuals with SARS-CoV-2 and 54 negative controls ####
   control <- colnames(gse_152075_raw_counts_human)[startsWith(x = colnames(gse_152075_raw_counts_human), prefix = "NEG_")]
   sars_cov_2 <- colnames(gse_152075_raw_counts_human)[startsWith(x = colnames(gse_152075_raw_counts_human), prefix = "POS_")]
   nasopharyngeal_swabs_raw_counts <- gse_152075_raw_counts_human[, c("hgnc_symbol", control, sars_cov_2)]
-  
-  # Series 19: Fetch study GSE150392 from GEO with 1 comparison ####
-  # getGeoSuppFiles("GSE150392")
+```
+
+### Series record 8: Fetch study GSE150392 from GEO with 1 comparison
+```{r series_record_8}
+ # Series 8: Fetch study GSE150392 from GEO with 1 comparison ####
+  getGEOSuppFiles("GSE150392")
   gse_150392_raw_counts_human <- as.data.frame.matrix(read.delim("GSE150392/GSE150392_Cov_Mock_Raw_COUNTS.csv.gz", sep = ","))
   # Remove entries without HGNC annotation
   gse_150392_raw_counts_human <- gse_150392_raw_counts_human[gse_150392_raw_counts_human$X %in% gse_150392_raw_counts_human$X[grepl("_", gse_150392_raw_counts_human$X, fixed = TRUE)], ]
   #  Remove ensembl identifiers
   gse_150392_raw_counts_human$X <- gsub(".*_", "", gse_150392_raw_counts_human$X)
   colnames(gse_150392_raw_counts_human)[1] <- "hgnc_symbol"
-  # Comp. 9.19:  Samples with SARS-CoV-2 infected and mock treated hiPSC-CMs ####
+  # Comp. 8.19:  Samples with SARS-CoV-2 infected and mock treated hiPSC-CMs ####
   hiPSC_CMs_raw_counts <- gse_150392_raw_counts_human[, c("hgnc_symbol", "Mock1", "Mock2", "Mock3", "Cov1", "Cov2", "Cov3")]
   # Remove duplicate entries
   hiPSC_CMs_raw_counts <-  hiPSC_CMs_raw_counts[!hiPSC_CMs_raw_counts$hgnc_symbol%in%hiPSC_CMs_raw_counts$hgnc_symbol[duplicated(hiPSC_CMs_raw_counts$hgnc_symbol)],]
-  
-# Step 1: Unify hgnc_symbol ####
+```
+
+## Step 2: Unify to hgnc_symbols
+```{r unify_gene_symbols}
 # List with all comparisons
 comparisons <- list(
   NHBE_series1_raw_counts, A549_series2_raw_counts, A549_series5_raw_counts, A549_ACE2_series6_raw_counts, A549_ACE2_series16_raw_counts, Calu3_raw_count_series7, lung_biopsy_raw_counts_series15,
@@ -247,9 +277,7 @@ names(comparisons) <- c(
   "SARS-CoV-2 versus Mock infected HESC-derived cardiomyocytes cells",
   "SARS-CoV-2 versus Mock infected Human cardiomyocytes cells",
   "SARS-CoV-2 versus Mock infected Macrophages",
-
-  #"SARS-CoV-2 versus Mock infected HPSC-derived lung organoids",
-
+  
   "SARS-CoV-2 versus Mock infected HPSC-derived colonic organoids",
 
   "SARS-CoV-2 versus Mock infected Cornea sample",
@@ -284,17 +312,27 @@ while (j <= length(comparisons)) {
   comparisons[[j]] <- tibble::column_to_rownames(.data = comparisons[[j]], var = "hgnc_symbol")
   j <- j + 1
 }
-# Step 2: DE-Analysis with DESeq2 ####
+# Sort dataframes on rownames to ensure easier comparison later on
+j <- 1
+ids <- ids[order(ids)]
+while (j <= length(comparisons)) {
+  comparisons[[j]] <- comparisons[[j]][order(row.names(comparisons[[j]])), ]
+  j <- j + 1
+}
+```
+
+## Step 3: DE-Analysis with DESeq2
+### Run DESeq2
+```{r de_analysis, echo=FALSE}
 dds_list <- list()
 j <- 1
 while (j <= length(comparisons)) {
- #message(paste0("Processing: ",names(comparisons)[j]))
-  coldata <- data.frame(condition = factor(c(rep("Mock", ncol(comparisons[[j]]) / 2), rep("SARS.CoV.2", ncol(comparisons[[j]]) / 2))))
+    # The first half are always control samples and the second halg are infected samples
+    coldata <- data.frame(condition = factor(c(rep("Mock", ncol(comparisons[[j]]) / 2),
+                                               rep("SARS.CoV.2", ncol(comparisons[[j]]) / 2))))
   rownames(coldata) <- colnames(comparisons[[j]])
   dds <- DESeqDataSetFromMatrix(countData = comparisons[[j]], colData = coldata, design = ~condition)
-  # Filter out genes that have less than two reads
-  # dds <- dds[rowSums(DESeq2::counts(dds)) > 1, ]
-
+ 
   # Run DESeq and get results
   dds_list[[j]] <- DESeq(dds)
 
@@ -302,25 +340,33 @@ while (j <= length(comparisons)) {
 }
 names(dds_list) <- names(comparisons)
 saveRDS(dds_list, "use_case_data/geo_data/data/DESeq2_result_list.rds")
-# Step 3: Cutoffs, Volcano and DE genes ####
+```
+
+### Cutoffs, Volcano and DE genes
+```{r cutoff_assesment}
 dds_list <- readRDS("use_case_data/geo_data/data/DESeq2_result_list.rds")
 volcanos <- list()
+# List with the differentially expressed genes of every comparison
 degs_deseq_list <- list()
-# TODO
+
+# List with the Log2Fc values of every comparison. Used later to create heatmaps for the acquired pathways 
+log_2_fc_list <- tibble(hgnc_symbol = ids)
+
+# TODO Change for different cutoffs variations
 fc_cutoff <- 1
 pCutoff <- 0.001
+
 j <- 1
 while (j <= length(dds_list)) {
   # Contrast the samples infected with SARS.CoV.2 to the Mock infected samples
   # Important: The order in which the conditions are specified is important
   results <- results(dds_list[[j]], contrast = c("condition", "SARS.CoV.2", "Mock"))
-  # results <- lfcShrink(dds_list[[j]], contrast = c("condition", "SARS.CoV.2", "Mock"), res = results, type = "normal")
 
   p_adjusted_vals <- results$padj <= pCutoff
   p_adjusted_vals[is.na(p_adjusted_vals)] <- FALSE
   deg_deseq <- rownames(results[(results$log2FoldChange <= -fc_cutoff | results$log2FoldChange >= fc_cutoff) & p_adjusted_vals, ])
   degs_deseq_list[[j]] <- deg_deseq
-  # Plot volcano plot to asses good cutoffs
+#  Plot volcano plot to asses good cutoffs
   volcanos[[j]] <- EnhancedVolcano(results,
     lab = rownames(results),
     title = names(dds_list)[j],
@@ -333,24 +379,39 @@ while (j <= length(dds_list)) {
     ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
     xlab = bquote(~ Log[2] ~ "(" ~ italic(FoldChange) ~ ")")
   )
+    # Save log_2_fc_values of every comparison 
+    log_2_fc_list[names(dds_list)[j]] <- results$log2FoldChange
+
   j <- j + 1
 }
+# Save log_2_fc_list 
+saveRDS(log_2_fc_list, "use_case_data/geo_data/data/log_2_fc_tibble.rds")
+
+# Save grid plots of volcanos ####
+cutoff_combination <-  paste0("LFC", gsub(pattern = "\\.",x = fc_cutoff, replacement = ","),
+                              "_P", gsub(pattern = "\\.",x = pCutoff, replacement = ","))
+
 names(volcanos) <- names(dds_list)
 names(degs_deseq_list) <- names(dds_list)
 for (i in c(1:length(volcanos))) {
-  # TODO
-  ggsave(plot = volcanos[[i]], filename = paste0("~/Desktop/plots/geo_volcanos_upset/", "LFC2_P0,001/", names(volcanos)[i], ".png"), width = 9.5, height = 7)
+  ggsave(plot = volcanos[[i]], filename = paste0("use_case_data/geo_data/volcano_plots/", cutoff_combination, "/",
+                                                  names(volcanos)[i], ".png"), width = 9.5, height = 7)
 }
-
+# First 9 volcanos
 grid <- ggarrange(plotlist = volcanos[1:9], ncol = 3, nrow = 3)
-# TODO
-ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/grid_1_9.png", width = 30, height = 30)
+ggsave(plot = grid,
+       filename = paste0("use_case_data/geo_data/volcano_plots/", cutoff_combination, "/grid_1_9.png"), 
+       width = 30, height = 30)
 
+# Last 10 volcanos
 grid <- ggarrange(plotlist = volcanos[10:19], ncol = 3, nrow = 4)
-# TODO
-ggsave(plot = grid, filename = "~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/grid_10_19.png", width = 30, height = 30)
+ggsave(plot = grid,
+       filename = paste0("use_case_data/geo_data/volcano_plots/", cutoff_combination, "/grid_10_19.png"),
+       width = 30, height = 30)
+```
 
-# Step 4: Create indicator matrix  ####
+## Step 4: Crate indicator matrix
+```{r indicator_matrix}
 indicator_matrix <- data.frame(hgnc_symbol = ids)
 
 for (i in c(1:length(degs_deseq_list))) {
@@ -373,14 +434,16 @@ upset_plot <- upset(indicator_matrix[,c(2:20)],
   sets = colnames(indicator_matrix)[c(2:20)],
   sets.x.label = "Number of differentially expressed genes \nin the dataset",
   main.bar.color = "black",
-  sets.bar.color = "blue",nintersects = 20,
+  sets.bar.color = "blue", nintersects = 100,
   order.by = "freq")
 # TODO
-pdf(file="~/Desktop/plots/geo_volcanos_upset/LFC2_P0,001/upset.pdf", width = 10, height = 7) # or other device
+pdf(file="~/Desktop/plots/geo/LFC1_P0,001/volcanos_and_upset/upset.pdf", width = 10, height = 7) # or other device
 upset_plot
 dev.off()
+```
 
-# Step 5: Prepare biological interaction network ###
+## Step 5: Prepare biological interaction network
+```{r biological_network}
 human_biogrid_network <- findInteractionList(organism = "human", idType = "Official")
 # KeyPathwayMineR support two types of input either a sif file or an iGraph object
 # For this use case we will utilize iGraph objects
@@ -395,3 +458,4 @@ human_biogrid_network <- graph_from_data_frame(d = edges, directed = FALSE)
 # Remove duplicate edges and loops
 human_biogrid_network <- simplify(human_biogrid_network)
 saveRDS(human_biogrid_network, "use_case_data/geo_data/graphs/human_biogrid_network.rds")
+```
