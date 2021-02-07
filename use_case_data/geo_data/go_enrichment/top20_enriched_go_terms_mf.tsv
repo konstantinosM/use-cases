@@ -1,21 +1,21 @@
 GO.ID	Term	Annotated	Significant	Expected	classicFisher
-GO:0008009	chemokine activity	41	3	0.02	3.1e-07
-GO:0042379	chemokine receptor binding	58	3	0.02	9.0e-07
-GO:0005125	cytokine activity	231	3	0.09	5.8e-05
-GO:0048020	CCR chemokine receptor binding	36	2	0.01	7.3e-05
-GO:0005126	cytokine receptor binding	259	3	0.1	8.1e-05
-GO:0001664	G protein-coupled receptor binding	285	3	0.11	0.00011
-GO:0048018	receptor ligand activity	473	3	0.18	0.00048
-GO:0030546	signaling receptor activator activity	478	3	0.18	0.00050
-GO:0030545	receptor regulator activity	517	3	0.19	0.00062
-GO:0031731	CCR6 chemokine receptor binding	5	1	0	0.00187
-GO:0031727	CCR2 chemokine receptor binding	6	1	0	0.00225
-GO:0061578	Lys63-specific deubiquitinase activity	12	1	0	0.00449
-GO:0045236	CXCR chemokine receptor binding	17	1	0.01	0.00636
-GO:0070530	K63-linked polyubiquitin modification-de...	17	1	0.01	0.00636
-GO:0001848	complement binding	21	1	0.01	0.00785
-GO:0030021	extracellular matrix structural constitu...	23	1	0.01	0.00859
-GO:0005540	hyaluronic acid binding	27	1	0.01	0.01008
-GO:0005102	signaling receptor binding	1536	3	0.58	0.01414
-GO:0031593	polyubiquitin modification-dependent pro...	42	1	0.02	0.01565
-GO:0008233	peptidase activity	601	2	0.23	0.01911
+GO:0005126	cytokine receptor binding	259	8	0.73	5.4e-07
+GO:0019899	enzyme binding	2221	19	6.25	3.1e-06
+GO:0042802	identical protein binding	1867	17	5.25	5.7e-06
+GO:0005515	protein binding	12467	45	35.06	1.3e-05
+GO:0004707	MAP kinase activity	18	3	0.05	1.6e-05
+GO:0042379	chemokine receptor binding	58	4	0.16	2.1e-05
+GO:0019900	kinase binding	751	10	2.11	3.5e-05
+GO:0019901	protein kinase binding	670	9	1.88	8.6e-05
+GO:0098772	molecular function regulator	3628	22	10.2	0.00010
+GO:0051219	phosphoprotein binding	90	4	0.25	0.00012
+GO:0048020	CCR chemokine receptor binding	36	3	0.1	0.00014
+GO:0008009	chemokine activity	41	3	0.12	0.00021
+GO:0005102	signaling receptor binding	1536	13	4.32	0.00022
+GO:0001784	phosphotyrosine residue binding	42	3	0.12	0.00022
+GO:0005138	interleukin-6 receptor binding	9	2	0.03	0.00027
+GO:0043208	glycosphingolipid binding	9	2	0.03	0.00027
+GO:0005125	cytokine activity	231	5	0.65	0.00046
+GO:0045309	protein phosphorylated amino acid bindin...	56	3	0.16	0.00052
+GO:0005539	glycosaminoglycan binding	240	5	0.67	0.00055
+GO:0002020	protease binding	144	4	0.4	0.00070

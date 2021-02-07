@@ -1,21 +1,21 @@
 GO.ID	Term	Annotated	Significant	Expected	classicFisher
-GO:0005615	extracellular space	3027	6	1.12	4.1e-05
-GO:0005576	extracellular region	3932	6	1.45	0.0002
-GO:0033165	interphotoreceptor matrix	5	1	0	0.0018
-GO:1904724	tertiary granule lumen	55	1	0.02	0.0201
-GO:0035580	specific granule lumen	62	1	0.02	0.0226
-GO:0000323	lytic vacuole	696	2	0.26	0.0244
-GO:0005764	lysosome	696	2	0.26	0.0244
-GO:0005773	vacuole	784	2	0.29	0.0305
-GO:0001750	photoreceptor outer segment	87	1	0.03	0.0316
-GO:0043202	lysosomal lumen	94	1	0.03	0.0341
-GO:0005796	Golgi lumen	104	1	0.04	0.0377
-GO:0072562	blood microparticle	110	1	0.04	0.0398
-GO:0097733	photoreceptor cell cilium	112	1	0.04	0.0406
-GO:0097731	9+0 non-motile cilium	132	1	0.05	0.0477
-GO:0097730	non-motile cilium	156	1	0.06	0.0561
-GO:0042581	specific granule	161	1	0.06	0.0579
-GO:0070820	tertiary granule	164	1	0.06	0.0589
-GO:0005775	vacuolar lumen	173	1	0.06	0.0621
-GO:0005788	endoplasmic reticulum lumen	306	1	0.11	0.1076
-GO:0034774	secretory granule lumen	328	1	0.12	0.1149
+GO:0098805	whole membrane	1671	16	4.62	5.0e-06
+GO:0031410	cytoplasmic vesicle	2358	19	6.51	5.8e-06
+GO:0097708	intracellular vesicle	2362	19	6.53	5.9e-06
+GO:0005925	focal adhesion	419	8	1.16	1.7e-05
+GO:0030055	cell-substrate junction	425	8	1.17	1.9e-05
+GO:0031983	vesicle lumen	334	7	0.92	3.3e-05
+GO:0031982	vesicle	3729	23	10.3	3.4e-05
+GO:0045121	membrane raft	337	7	0.93	3.5e-05
+GO:0098857	membrane microdomain	338	7	0.93	3.6e-05
+GO:0012505	endomembrane system	4365	25	12.06	4.2e-05
+GO:0005896	interleukin-6 receptor complex	4	2	0.01	4.5e-05
+GO:0098589	membrane region	351	7	0.97	4.6e-05
+GO:0005615	extracellular space	3027	20	8.36	5.9e-05
+GO:0099503	secretory vesicle	1015	11	2.8	7.4e-05
+GO:0030141	secretory granule	861	10	2.38	9.5e-05
+GO:0097441	basal dendrite	7	2	0.02	0.00016
+GO:0044853	plasma membrane raft	112	4	0.31	0.00025
+GO:0005576	extracellular region	3932	22	10.86	0.00027
+GO:0034774	secretory granule lumen	328	6	0.91	0.00027
+GO:0060205	cytoplasmic vesicle lumen	332	6	0.92	0.00029

@@ -4,7 +4,6 @@ author: "Konstantinos Mechteridis"
 date: "1/30/2021"
 output: html_document
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library("topGO")
@@ -13,17 +12,10 @@ library("org.Hs.eg.db")
 library("Rgraphviz")
 library("knitr")
 library("visNetwork")
-
-if (!require("gplots")) {
-  install.packages("gplots", dependencies = TRUE)
-  library(gplots)
-}
-if (!require("RColorBrewer")) {
-  install.packages("RColorBrewer", dependencies = TRUE)
-  library(RColorBrewer)
-}
+library("gplots")
+library("RColorBrewer")
+library("tidyverse")
 ```
-
 ## Load data
 ```{r loadData}
 indicator_matrix <- readRDS("use_case_data/geo_data/data/indicator_matrix_lfc1_p0,001.rds")
@@ -73,13 +65,12 @@ visSave(network, "union_network.html", selfcontained = TRUE, background = "white
 
 ## Heatmap
 ```{r heatmap}
-pathway_data_data <- pathway@nodes # [pathway@nodes$exception]
+pathway_data <- pathway@nodes # [pathway@nodes$exception]
 lfc_2_matrix <- readRDS("use_case_data/geo_data/data/log_2_fc_tibble.rds")
 # Select LFC values for nodes of interest
 lfc_2_matrix <- lfc_2_matrix[lfc_2_matrix$hgnc_symbol %in% pathway_data$node, ] %>% column_to_rownames("hgnc_symbol")
 # Remove nodes that are not in the dataset
-nodes[setdiff(pathway_data, row.names(lfc_2_matrix))]
-pathway_data <- pathway_data[!pathway_data$node %in% setdiff(pathway_data$node, row.names(lfc_2_matrix)),]
+pathway_data <- pathway_data[!pathway_data$node %in% setdiff(pathway_data$node, row.names(lfc_2_matrix)), ]
 # Rename comparison so that they fit in the heatmap
 colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Mock infected ", replacement = "")
 colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Healthy lung ", replacement = "Lung ")
@@ -107,6 +98,7 @@ heatmap.2(
 )
 dev.off()
 ```
+
 ## Gene ontology enrichment analysis
 
 ### Gene to GO mapping
@@ -124,7 +116,7 @@ go_data_bp <- new("topGOdata", ontology = "BP", allGenes = geneList, annot = ann
 # Run enrichment tests
 classic_fs_bp <- runTest(go_data_bp, algorithm = "classic", statistic = "fisher")
 # Save in table
-table_bp <- GenTabvisle(go_data_bp, topNodes = 20, classicFisher = classic_fs_bp)
+table_bp <- GenTable(go_data_bp, topNodes = 2000, classicFisher = classic_fs_bp)
 kable(table_bp)
 # Subgraph of the top 5 GO terms
 
@@ -164,4 +156,118 @@ showSigOfNodes(go_data_cc, score(classic_fs_cc), firstSigNodes = 10, useInfo = "
 dev.off()
 # Save data
 write.table(table_cc, file = "use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_cc.tsv", row.names = F, quote = FALSE, sep = "\t")
+```
+
+## Euler diagramms 
+```{r venn}
+library(VennDiagram)
+library(flavin)
+
+# Get all Go terms with a p value lower than 0.001 ####
+bp_terms <- names(classic_fs_bp@score[classic_fs_bp@score < 0.01])
+cc_terms <- names(classic_fs_cc@score[classic_fs_cc@score < 0.01])
+mf_terms <- names(classic_fs_mf@score[classic_fs_mf@score < 0.01])
+
+# Proposed GO terms from Gene ontology ###
+go <- read_gaf(filepath = "~/Downloads/sars-cov-2_targets.gaf") %>% select(GO_ID = "GO_ID", Aspect = "Aspect")
+go_bp <- go[go$Aspect == "P", ]$GO_ID
+go_cc <- go[go$Aspect == "C", ]$GO_ID
+go_mf <- go[go$Aspect == "F", ]$GO_ID
+
+# Euler diagram bp
+# Generate 3 sets of 200 words
+set1 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
+set2 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
+set3 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
+
+# Prepare a palette of 3 colors with R colorbrewer:
+library(RColorBrewer)
+myCol <- c("#347FC4","#F1A66A")
+
+futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
+# Euler BP ####
+venn.diagram(x = list(bp_terms, go_bp), category.names = c("topGO" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_bp.png',
+        # Output features
+          imagetype = "png",
+          height = 1200,
+          width = 1300,
+          resolution = 600,
+          compression = "lzw",
+        # Circles
+          lwd = 2,
+          lty = 'blank',
+          fill = myCol,
+        # Numbers
+          cex = .9,
+          fontface = "bold",
+          fontfamily = "Helvetica",
+        # Set names
+          cat.cex = 0.9,
+          cat.fontface = "bold",
+          cat.default.pos = "outer",
+          cat.pos = c(-27, 27),
+          cat.dist = c(0.055, 0.055),
+          cat.col = myCol, 
+        # Title
+          main.fontfamily = "Helvetica",
+          main = "BP GO terms related to SARS-Cov-2 vs.\n topGO terms with p-val < 0.01",
+          main.cex = 0.6)
+
+
+# Euler MF ####
+venn.diagram(x = list(mf_terms, go_mf), category.names = c("topGO" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_mf.png',
+        # Output features
+          imagetype = "png",
+          height = 1200,
+          width = 1300,
+          resolution = 600,
+          compression = "lzw",
+        # Circles
+          lwd = 2,
+          lty = 'blank',
+          fill = myCol,
+        # Numbers
+          cex = .9,
+          fontface = "bold",
+          fontfamily = "Helvetica",
+        # Set names
+          cat.cex = 0.9,
+          cat.fontface = "bold",
+          cat.default.pos = "outer",
+          cat.pos = c(-18, 40),
+          cat.dist = c(0.040, 0.040),
+          cat.col = myCol, 
+        # Title
+          main.fontfamily = "Helvetica",
+          main = "MF GO terms related to SARS-Cov-2 vs.\n topGO terms with p-val < 0.01",
+          main.cex = 0.6)
+
+
+# Euler CC ####
+venn.diagram(x = list(cc_terms, go_cc), category.names = c("topGO" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_cc.png',
+        # Output features
+          imagetype = "png",
+          height = 1200,
+          width = 1300,
+          resolution = 600,
+          compression = "lzw",
+        # Circles
+          lwd = 2,
+          lty = 'blank',
+          fill = myCol,
+        # Numbers
+          cex = .9,
+          fontface = "bold",
+          fontfamily = "Helvetica",
+        # Set names
+          cat.cex = 0.9,
+          cat.fontface = "bold",
+          cat.default.pos = "outer",
+          cat.pos = c(-18, 40),
+          cat.dist = c(0.040, 0.040),
+          cat.col = myCol, 
+        # Title
+          main.fontfamily = "Helvetica",
+          main = "CC GO terms related to SARS-Cov-2 vs.\n topGO terms with p-val < 0.01",
+          main.cex = 0.6)
 ```
