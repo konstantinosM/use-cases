@@ -367,24 +367,24 @@ while (j <= length(dds_list)) {
   deg_deseq <- rownames(results[(results$log2FoldChange <= -fc_cutoff | results$log2FoldChange >= fc_cutoff) & p_adjusted_vals, ])
   degs_deseq_list[[j]] <- deg_deseq
 #  Plot volcano plot to asses good cutoffs
-  volcanos[[j]] <- EnhancedVolcano(results,
-    lab = rownames(results),
-    title = names(dds_list)[j],
-    subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
-    caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
-    x = "log2FoldChange",
-    y = "padj",
-    FCcutoff = fc_cutoff,
-    pCutoff = pCutoff,
-    ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
-    xlab = bquote(~ Log[2] ~ "(" ~ italic(FoldChange) ~ ")")
-  )
+  # volcanos[[j]] <- EnhancedVolcano(results,
+  #   lab = rownames(results),
+  #   title = names(dds_list)[j],
+  #   subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
+  #   caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
+  #   x = "log2FoldChange",
+  #   y = "padj",
+  #   FCcutoff = fc_cutoff,
+  #   pCutoff = pCutoff,
+  #   ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
+  #   xlab = bquote(~ Log[2] ~ "(" ~ italic(FoldChange) ~ ")")
+  #)
     # Save log_2_fc_values of every comparison 
     log_2_fc_list[names(dds_list)[j]] <- results$log2FoldChange
 
   j <- j + 1
 }
-# Save log_2_fc_list 
+# Save log_2_fc_list ####
 saveRDS(log_2_fc_list, "use_case_data/geo_data/data/log_2_fc_tibble.rds")
 
 # Save grid plots of volcanos ####

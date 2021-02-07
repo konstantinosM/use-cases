@@ -12,6 +12,7 @@ library("AnnotationFuncs")
 library("org.Hs.eg.db")
 library("Rgraphviz")
 library("knitr")
+library("visNetwork")
 ```
 
 ## Load data
@@ -21,19 +22,9 @@ pathwaysoi_ines <- readRDS(file = "use_case_data/geo_data/comparison/selected_in
 pathwaysoi_glone <- readRDS(file = "use_case_data/geo_data/comparison/selected_glone_pathways.rds")
 ```
 
-## Gene to GO mapping
-```{r annotation}
-gene_universe <- indicator_matrix$hgnc_symbol
-GOs <- translate(gene_universe, from = org.Hs.egALIAS2EG, to = org.Hs.egGO)
-```
 ## Select pathway of interest
 ```{r pathwayoii}
 pathway <- pathwaysoi_ines$`K-8-L1-10-union`
-
-myIntersetingGenes <- pathway@nodes$node
-
-geneList <- factor(as.integer(gene_universe %in% myIntersetingGenes))
-names(geneList) <- gene_universe
 ```
 ## Visualize pathway
 ```{r visualize_pathway}
@@ -64,10 +55,61 @@ visSave(network, "union_network.html", selfcontained = TRUE, background = "white
 
 ## Heatmap
 ```{r heatmap}
+if (!require("gplots")) {
+   install.packages("gplots", dependencies = TRUE)
+   library(gplots)
+   }
+if (!require("RColorBrewer")) {
+   install.packages("RColorBrewer", dependencies = TRUE)
+   library(RColorBrewer)
+}
+
+nodes <- pathway@nodes$node[pathway@nodes$exception]
 lfc_2_matrix <- readRDS("use_case_data/geo_data/data/log_2_fc_tibble.rds")
+
+# Select LFC values for nodes of interest  
+lfc_2_matrix <- lfc_2_matrix[lfc_2_matrix$hgnc_symbol%in%nodes,]%>%column_to_rownames("hgnc_symbol")
+colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Mock infected ", replacement = "")
+colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Healthy lung ", replacement = "Lung ")
+colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Negative control ", replacement = "")
+colnames(lfc_2_matrix)[8] <- "HESC cardiomyocytes cells"
+colnames(lfc_2_matrix)[11] <- "HPSC colonic organoids"
+lfc_2_matrix[is.na(lfc_2_matrix)] <- 0
+
+my_palette <- colorRampPalette(c("#023e8a","#B5E2FA",
+                                 "#F9F7F3",
+                                 "#F7A072","#fb8500"))(n = 1000)
+heatmap(x = as.matrix(lfc_2_matrix))
+
+png("plots_and_figures/geo/LFC1_P0,001/heatmaps/non_significant_genes.png",        
+width = 5*300,        
+height = 5*300,
+res = 300,           
+pointsize = 8)  
+ heatmap.2(x = as.matrix(lfc_2_matrix),
+            density.info = "none",
+            notecol = "green",
+            col = my_palette,
+            trace="none",
+            key.xlab = "Log2 fold change",
+            ColSideColors = c(rep("#FFFC5C",6),"#3C91E6",rep("#FFFC5C",4),rep("#3C91E6",3),rep("#FFFC5C",3),"#3C91E6","#FFFC5C"),
+            margins = c(12, 5))
+dev.off()              
+
+
 
 ```
 ## Gene ontology enrichment analysis
+
+### Gene to GO mapping
+```{r annotation}
+gene_universe <- indicator_matrix$hgnc_symbol
+GOs <- translate(gene_universe, from = org.Hs.egALIAS2EG, to = org.Hs.egGO)
+myIntersetingGenes <- pathway@nodes$node
+
+geneList <- factor(as.integer(gene_universe %in% myIntersetingGenes))
+names(geneList) <- gene_universe
+```
 ### Biological process
 ```{r bp}
 go_data_bp <- new("topGOdata", ontology = "BP", allGenes = geneList, annot = annFUN.gene2GO, gene2GO = GOs)
