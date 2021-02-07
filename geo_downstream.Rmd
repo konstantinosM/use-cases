@@ -13,6 +13,15 @@ library("org.Hs.eg.db")
 library("Rgraphviz")
 library("knitr")
 library("visNetwork")
+
+if (!require("gplots")) {
+  install.packages("gplots", dependencies = TRUE)
+  library(gplots)
+}
+if (!require("RColorBrewer")) {
+  install.packages("RColorBrewer", dependencies = TRUE)
+  library(RColorBrewer)
+}
 ```
 
 ## Load data
@@ -30,74 +39,73 @@ pathway <- pathwaysoi_ines$`K-8-L1-10-union`
 ```{r visualize_pathway}
 edges <- data.frame(from = pathway@edges$source, to = pathway@edges$target)
 nodes <- data.frame(
-          id = pathway@nodes$node,
-          label = pathway@nodes$node,
-          title = paste('<a target="_blank" href = "https://www.ncbi.nlm.nih.gov/gene/?term=',
-                        pathway@nodes$node, '">Gene id: ', pathway@nodes$node, " (Visit NCBI)</a>", sep = ""))
+  id = pathway@nodes$node,
+  label = pathway@nodes$node,
+  title = paste('<a target="_blank" href = "https://www.ncbi.nlm.nih.gov/gene/?term=',
+    pathway@nodes$node, '">Gene id: ', pathway@nodes$node, " (Visit NCBI)</a>",
+    sep = ""
+  )
+)
 nodes <- cbind(nodes, group = as.character(pathway@nodes$exception))
 
 
-network <- visNetwork(main = "K-8-L1-10 union network",
-                      submain = paste0("Nodes: ", nrow(nodes),
-                                       ", Edges: ", nrow(edges),
-                                       "<br>Exception nodes: ", table(nodes$group)["TRUE"],
-                                       "<br>Avg. de cases per node: ",pathway@avg_exp), 
-                      nodes = nodes, 
-                      edges = edges) %>%
-              visGroups(groupname = "TRUE",
-                        color = "#fb8500",
-                        shape = "square",
-                        shadow = list(enabled = TRUE)) %>%
-              visGroups(groupname = "FALSE", color = "#023e8a")%>%
+network <- visNetwork(
+  main = "K-8-L1-10 union network",
+  submain = paste0(
+    "Nodes: ", nrow(nodes),
+    ", Edges: ", nrow(edges),
+    "<br>Exception nodes: ", table(nodes$group)["TRUE"],
+    "<br>Avg. de cases per node: ", pathway@avg_exp
+  ),
+  nodes = nodes,
+  edges = edges
+) %>%
+  visGroups(
+    groupname = "TRUE",
+    color = "#fb8500",
+    shape = "square",
+    shadow = list(enabled = TRUE)
+  ) %>%
+  visGroups(groupname = "FALSE", color = "#023e8a") %>%
   visNodes(labelHighlightBold = TRUE)
 visSave(network, "union_network.html", selfcontained = TRUE, background = "white")
 ```
 
 ## Heatmap
 ```{r heatmap}
-if (!require("gplots")) {
-   install.packages("gplots", dependencies = TRUE)
-   library(gplots)
-   }
-if (!require("RColorBrewer")) {
-   install.packages("RColorBrewer", dependencies = TRUE)
-   library(RColorBrewer)
-}
-
-nodes <- pathway@nodes$node[pathway@nodes$exception]
+pathway_data_data <- pathway@nodes # [pathway@nodes$exception]
 lfc_2_matrix <- readRDS("use_case_data/geo_data/data/log_2_fc_tibble.rds")
-
-# Select LFC values for nodes of interest  
-lfc_2_matrix <- lfc_2_matrix[lfc_2_matrix$hgnc_symbol%in%nodes,]%>%column_to_rownames("hgnc_symbol")
+# Select LFC values for nodes of interest
+lfc_2_matrix <- lfc_2_matrix[lfc_2_matrix$hgnc_symbol %in% pathway_data$node, ] %>% column_to_rownames("hgnc_symbol")
+# Remove nodes that are not in the dataset
+nodes[setdiff(pathway_data, row.names(lfc_2_matrix))]
+pathway_data <- pathway_data[!pathway_data$node %in% setdiff(pathway_data$node, row.names(lfc_2_matrix)),]
+# Rename comparison so that they fit in the heatmap
 colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Mock infected ", replacement = "")
 colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Healthy lung ", replacement = "Lung ")
 colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2 versus Negative control ", replacement = "")
 colnames(lfc_2_matrix)[8] <- "HESC cardiomyocytes cells"
 colnames(lfc_2_matrix)[11] <- "HPSC colonic organoids"
-lfc_2_matrix[is.na(lfc_2_matrix)] <- 0
+# Color palette for heatmap
+my_palette <- colorRampPalette(c(
+  "#023e8a", "#B5E2FA",
+  "#F9F7F3",
+  "#F7A072", "#fb8500"
+))(n = 1000)
 
-my_palette <- colorRampPalette(c("#023e8a","#B5E2FA",
-                                 "#F9F7F3",
-                                 "#F7A072","#fb8500"))(n = 1000)
-heatmap(x = as.matrix(lfc_2_matrix))
-
-png("plots_and_figures/geo/LFC1_P0,001/heatmaps/non_significant_genes.png",        
-width = 5*300,        
-height = 5*300,
-res = 300,           
-pointsize = 8)  
- heatmap.2(x = as.matrix(lfc_2_matrix),
-            density.info = "none",
-            notecol = "green",
-            col = my_palette,
-            trace="none",
-            key.xlab = "Log2 fold change",
-            ColSideColors = c(rep("#FFFC5C",6),"#3C91E6",rep("#FFFC5C",4),rep("#3C91E6",3),rep("#FFFC5C",3),"#3C91E6","#FFFC5C"),
-            margins = c(12, 5))
-dev.off()              
-
-
-
+png("plots_and_figures/geo/LFC1_P0,001/heatmaps/all_genes.png", width = 5 * 300, height = 5 * 300, res = 300, pointsize = 8)
+heatmap.2(
+  x = as.matrix(lfc_2_matrix),
+  density.info = "none",
+  notecol = "green",
+  col = my_palette,
+  trace = "none",
+  key.xlab = "Log2 fold change",
+  RowSideColors = c(ifelse(pathway_data$exception, "#fb8500", "#023e8a")),
+  ColSideColors = c(rep("#FFFC5C", 6), "#3C91E6", rep("#FFFC5C", 4), rep("#3C91E6", 3), rep("#FFFC5C", 3), "#3C91E6", "#FFFC5C"),
+  margins = c(12, 5)
+)
+dev.off()
 ```
 ## Gene ontology enrichment analysis
 
@@ -118,15 +126,14 @@ classic_fs_bp <- runTest(go_data_bp, algorithm = "classic", statistic = "fisher"
 # Save in table
 table_bp <- GenTabvisle(go_data_bp, topNodes = 20, classicFisher = classic_fs_bp)
 kable(table_bp)
-# Subgraph of the top 5 GO terms 
+# Subgraph of the top 5 GO terms
 
-pdf(file="use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_bp.pdf")
+pdf(file = "use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_bp.pdf")
 showSigOfNodes(go_data_bp, score(classic_fs_bp), firstSigNodes = 10, useInfo = "all")
 dev.off()
 
 # Save data
-write.table(table_bp, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_bp.tsv', row.names = F, quote=FALSE, sep='\t')
-
+write.table(table_bp, file = "use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_bp.tsv", row.names = F, quote = FALSE, sep = "\t")
 ```
 ### Molecular function
 ```{r mf}
@@ -136,26 +143,25 @@ classic_fs_mf <- runTest(go_data_mf, algorithm = "classic", statistic = "fisher"
 # Save in table
 table_mf <- GenTable(go_data_mf, classicFisher = classic_fs_mf, orderBy = "classicFisher", topNodes = 20)
 kable(table_mf)
-# Subgraph of the top 5 GO terms 
-pdf(file="use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_mf.pdf")
+# Subgraph of the top 5 GO terms
+pdf(file = "use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_mf.pdf")
 showSigOfNodes(go_data_mf, score(classic_fs_mf), firstSigNodes = 10, useInfo = "all")
 dev.off()
 # Save data
-write.table(table_mf, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_mf.tsv', row.names = F, quote=FALSE, sep='\t')
-
+write.table(table_mf, file = "use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_mf.tsv", row.names = F, quote = FALSE, sep = "\t")
 ```
 ### Cellular compartment
 ```{r cc}
-go_data_cc <- new("topGOdata", ontology = "CC" , allGenes = geneList, annot = annFUN.gene2GO, gene2GO = GOs)
+go_data_cc <- new("topGOdata", ontology = "CC", allGenes = geneList, annot = annFUN.gene2GO, gene2GO = GOs)
 # Run enrichment tests
 classic_fs_cc <- runTest(go_data_cc, algorithm = "classic", statistic = "fisher")
 # Save in table
 table_cc <- GenTable(go_data_cc, classicFisher = classic_fs_cc, orderBy = "classicFisher", topNodes = 20)
 kable(table_cc)
-# Subgraph of the top 5 GO terms 
+# Subgraph of the top 5 GO terms
 pdf(file = "use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_cc.pdf")
 showSigOfNodes(go_data_cc, score(classic_fs_cc), firstSigNodes = 10, useInfo = "all")
 dev.off()
 # Save data
-write.table(table_cc, file='use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_cc.tsv', row.names = F, quote=FALSE, sep='\t')
+write.table(table_cc, file = "use_case_data/geo_data/go_enrichment/top20_enriched_go_terms_cc.tsv", row.names = F, quote = FALSE, sep = "\t")
 ```
