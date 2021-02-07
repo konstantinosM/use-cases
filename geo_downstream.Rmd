@@ -78,18 +78,15 @@ colnames(lfc_2_matrix) <- gsub(x = colnames(lfc_2_matrix), pattern = "SARS-CoV-2
 colnames(lfc_2_matrix)[8] <- "HESC cardiomyocytes cells"
 colnames(lfc_2_matrix)[11] <- "HPSC colonic organoids"
 # Color palette for heatmap
-my_palette <- colorRampPalette(c(
-  "#023e8a", "#B5E2FA",
-  "#F9F7F3",
-  "#F7A072", "#fb8500"
-))(n = 1000)
+mypalette <- brewer.pal(11, "RdYlBu")
+morecols <- colorRampPalette(mypalette)
 
 png("plots_and_figures/geo/LFC1_P0,001/heatmaps/all_genes.png", width = 5 * 300, height = 5 * 300, res = 300, pointsize = 8)
 heatmap.2(
   x = as.matrix(lfc_2_matrix),
   density.info = "none",
   notecol = "green",
-  col = my_palette,
+  col = rev(morecols(50)),
   trace = "none",
   key.xlab = "Log2 fold change",
   RowSideColors = c(ifelse(pathway_data$exception, "#fb8500", "#023e8a")),
@@ -100,7 +97,6 @@ dev.off()
 ```
 
 ## Gene ontology enrichment analysis
-
 ### Gene to GO mapping
 ```{r annotation}
 gene_universe <- indicator_matrix$hgnc_symbol
@@ -118,9 +114,8 @@ classic_fs_bp <- runTest(go_data_bp, algorithm = "classic", statistic = "fisher"
 # Save in table
 table_bp <- GenTable(go_data_bp, topNodes = 2000, classicFisher = classic_fs_bp)
 kable(table_bp)
-# Subgraph of the top 5 GO terms
-
-pdf(file = "use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_bp.pdf")
+# Subgraph of the top 10 GO terms
+pdf(file = "plots_and_figures/geo/LFC1_P0,001/go_enrichment/dag_top10_enriched_go_terms_bp.pdf")
 showSigOfNodes(go_data_bp, score(classic_fs_bp), firstSigNodes = 10, useInfo = "all")
 dev.off()
 
@@ -135,8 +130,8 @@ classic_fs_mf <- runTest(go_data_mf, algorithm = "classic", statistic = "fisher"
 # Save in table
 table_mf <- GenTable(go_data_mf, classicFisher = classic_fs_mf, orderBy = "classicFisher", topNodes = 20)
 kable(table_mf)
-# Subgraph of the top 5 GO terms
-pdf(file = "use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_mf.pdf")
+# Subgraph of the top 10 GO terms
+pdf(file = "plots_and_figures/geo/LFC1_P0,001/go_enrichment/dag_top10_enriched_go_terms_mf.pdf")
 showSigOfNodes(go_data_mf, score(classic_fs_mf), firstSigNodes = 10, useInfo = "all")
 dev.off()
 # Save data
@@ -150,8 +145,8 @@ classic_fs_cc <- runTest(go_data_cc, algorithm = "classic", statistic = "fisher"
 # Save in table
 table_cc <- GenTable(go_data_cc, classicFisher = classic_fs_cc, orderBy = "classicFisher", topNodes = 20)
 kable(table_cc)
-# Subgraph of the top 5 GO terms
-pdf(file = "use_case_data/geo_data/go_enrichment/dag_top5_enriched_go_terms_cc.pdf")
+# Subgraph of the top 10 GO terms
+pdf(file = "plots_and_figures/geo/LFC1_P0,001/go_enrichment/dag_top10_enriched_go_terms_cc.pdf")
 showSigOfNodes(go_data_cc, score(classic_fs_cc), firstSigNodes = 10, useInfo = "all")
 dev.off()
 # Save data
