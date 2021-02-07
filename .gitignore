@@ -48,3 +48,7 @@ GSE*/
 
 # R markdown files
 *.html
+
+# Remove plots and fiures since they take up to much space
+plots_and_figures
+DESeq2_result_list.rds
