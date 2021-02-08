@@ -8,6 +8,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library("GEOquery")
 library("tibble")
 library("EnhancedVolcano")
+library("biomaRt")
+library("DESeq2")
+library("ggpubr")
 ```
 ## Step 1: Get all Series records
 ### Series record 1: Fetch study GSE147507 from GEO with 7 comparisons 
@@ -352,8 +355,8 @@ degs_deseq_list <- list()
 # List with the Log2Fc values of every comparison. Used later to create heatmaps for the acquired pathways 
 log_2_fc_list <- tibble(hgnc_symbol = ids)
 
-# TODO Change for different cutoffs variations
-fc_cutoff <- 1
+# Change for different cutoffs variations
+fc_cutoff <- 2
 pCutoff <- 0.001
 
 j <- 1
@@ -366,26 +369,24 @@ while (j <= length(dds_list)) {
   p_adjusted_vals[is.na(p_adjusted_vals)] <- FALSE
   deg_deseq <- rownames(results[(results$log2FoldChange <= -fc_cutoff | results$log2FoldChange >= fc_cutoff) & p_adjusted_vals, ])
   degs_deseq_list[[j]] <- deg_deseq
-#  Plot volcano plot to asses good cutoffs
-  # volcanos[[j]] <- EnhancedVolcano(results,
-  #   lab = rownames(results),
-  #   title = names(dds_list)[j],
-  #   subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
-  #   caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
-  #   x = "log2FoldChange",
-  #   y = "padj",
-  #   FCcutoff = fc_cutoff,
-  #   pCutoff = pCutoff,
-  #   ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
-  #   xlab = bquote(~ Log[2] ~ "(" ~ italic(FoldChange) ~ ")")
-  #)
+# Plot volcano plot to asses good cutoffs
+volcanos[[j]] <- EnhancedVolcano(results,
+  lab = rownames(results),
+  title = names(dds_list)[j],
+  subtitle = paste("P_ADJ ≤", pCutoff, " and ", "|Log2(FoldChange)| ≥", fc_cutoff, sep = ""),
+  caption = paste0("[Genes] Total = ", nrow(results), " and DEGs = ", length(deg_deseq)),
+  x = "log2FoldChange",
+  y = "padj",
+  FCcutoff = fc_cutoff,
+  pCutoff = pCutoff,
+  ylab = bquote(~ -Log[10] ~ "(" ~ italic(P_ADJ) ~ ")"),
+  xlab = bquote(~ Log[2] ~ "(" ~ italic(FoldChange) ~ ")")
+)
     # Save log_2_fc_values of every comparison 
     log_2_fc_list[names(dds_list)[j]] <- results$log2FoldChange
 
   j <- j + 1
 }
-# Save log_2_fc_list ####
-saveRDS(log_2_fc_list, "use_case_data/geo_data/data/log_2_fc_tibble.rds")
 
 # Save grid plots of volcanos ####
 cutoff_combination <-  paste0("LFC", gsub(pattern = "\\.",x = fc_cutoff, replacement = ","),
@@ -394,19 +395,21 @@ cutoff_combination <-  paste0("LFC", gsub(pattern = "\\.",x = fc_cutoff, replace
 names(volcanos) <- names(dds_list)
 names(degs_deseq_list) <- names(dds_list)
 for (i in c(1:length(volcanos))) {
-  ggsave(plot = volcanos[[i]], filename = paste0("use_case_data/geo_data/volcano_plots/", cutoff_combination, "/",
+  ggsave(plot = volcanos[[i]], filename = paste0("plots_and_figures/geo/",
+                                                 cutoff_combination,
+                                                 "/volcano_plots/",
                                                   names(volcanos)[i], ".png"), width = 9.5, height = 7)
 }
 # First 9 volcanos
 grid <- ggarrange(plotlist = volcanos[1:9], ncol = 3, nrow = 3)
 ggsave(plot = grid,
-       filename = paste0("use_case_data/geo_data/volcano_plots/", cutoff_combination, "/grid_1_9.png"), 
+       filename = paste0("plots_and_figures/geo/", cutoff_combination, "/volcano_plots/grid_1_9.png"), 
        width = 30, height = 30)
 
 # Last 10 volcanos
 grid <- ggarrange(plotlist = volcanos[10:19], ncol = 3, nrow = 4)
 ggsave(plot = grid,
-       filename = paste0("use_case_data/geo_data/volcano_plots/", cutoff_combination, "/grid_10_19.png"),
+       filename = paste0("plots_and_figures/geo/", cutoff_combination, "/volcano_plots/grid_10_19.png"), 
        width = 30, height = 30)
 ```
 

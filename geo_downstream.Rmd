@@ -15,6 +15,8 @@ library("visNetwork")
 library("gplots")
 library("RColorBrewer")
 library("tidyverse")
+library("VennDiagram")
+library("flavin")
 ```
 ## Load data
 ```{r loadData}
@@ -155,9 +157,6 @@ write.table(table_cc, file = "use_case_data/geo_data/go_enrichment/top20_enriche
 
 ## Euler diagramms 
 ```{r venn}
-library(VennDiagram)
-library(flavin)
-
 # Get all Go terms with a p value lower than 0.001 ####
 bp_terms <- names(classic_fs_bp@score[classic_fs_bp@score < 0.01])
 cc_terms <- names(classic_fs_cc@score[classic_fs_cc@score < 0.01])
@@ -176,7 +175,6 @@ set2 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
 set3 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
 
 # Prepare a palette of 3 colors with R colorbrewer:
-library(RColorBrewer)
 myCol <- c("#347FC4","#F1A66A")
 
 futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
