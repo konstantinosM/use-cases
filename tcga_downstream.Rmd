@@ -33,60 +33,81 @@ row.names(pathway_matrix) <- NULL
 pathway_matrix <- tibble::column_to_rownames(pathway_matrix, var = "STRING_id")
 pathway <- data.frame(STRING_id = row.names(pathway_matrix), z_score_mean = rowMeans(pathway_matrix[-1]))
 pathway["color"] <- c("")
-#FFFFFFFF -1 > Z- score < 2, C7FFD5 Z-Score > 2, 00FF00 Z-Score > 3
+# FFFFFFFF -1 > Z- score < 2, C7FFD5 Z-Score > 2, 00FF00 Z-Score > 3
 pathway$color[pathway$z_score_mean < -1] <- "#023e8a"
 pathway$color[pathway$z_score_mean >= -1 & pathway$z_score_mean <= 3] <- "#FFFFFFFF"
 pathway$color[pathway$z_score_mean > 3] <- "#fb8500"
-# Upload payload information to STRING server 
+# Upload payload information to STRING server
 payload_id <- string_db$post_payload(pathway$STRING_id, colors = pathway$color)
-# 
+#
 # pdf(file = "use_case_data/tcga_data/plots/z_score_2/K-3-L1-250.pdf", width = 6, height = 7)
 # string_db$plot_network(pathway$STRING_id,payload_id = payload_id)
 # dev.off()
-string_db$plot_network(pathway$STRING_id,payload_id = payload_id)
+string_db$plot_network(pathway$STRING_id, payload_id = payload_id)
 
 pathway <- string_db$add_proteins_description(pathway)
 ```
 
 ## Mean Z-score distribution of nodes in the pathway
 ```{r mean_z_score}
-# Color palette for heatmap 
+# Color palette for heatmap
 pathway$preferred_name <- factor(pathway$preferred_name, level = pathway$preferred_name[order(pathway$z_score_mean)])
- ggplot(pathway, aes(x = preferred_name, y = z_score_mean)) +
-   geom_point()+
-   geom_hline(yintercept=1, linetype="dashed", color = "#FFA400", size = 0.5)+
-   geom_hline(yintercept=-1, linetype="dashed", color = "#FFA400", size = 0.5)+
-   
-   geom_hline(yintercept=2, linetype="dashed", color = "#2A2A72", size = 0.7)+
-   geom_hline(yintercept=-2, linetype="dashed", color = "#2A2A72", size = 0.7)+
-   
-   geom_hline(yintercept=4, linetype="dashed", color = "purple", size = 1)+
-
-   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
-   
-   labs(title = "Mean Z-score", y = "Z-score", x = "Gene") 
+ggplot(pathway, aes(x = preferred_name, y = z_score_mean)) +
+  geom_point() +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "#FFA400", size = 0.5) +
+  geom_hline(yintercept = -1, linetype = "dashed", color = "#FFA400", size = 0.5) +
+  geom_hline(yintercept = 2, linetype = "dashed", color = "#2A2A72", size = 0.7) +
+  geom_hline(yintercept = -2, linetype = "dashed", color = "#2A2A72", size = 0.7) +
+  geom_hline(yintercept = 4, linetype = "dashed", color = "purple", size = 1) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(title = "Mean Z-score", y = "Z-score", x = "Gene")
 ```
 
 ## Compute Enrichment
 The enrichment is computed in Gene Ontology (Process, Function and Component), KEGG and Reactome pathways, PubMed publications, UniProt Keywords, and PFAM/INTERPRO/SMART using an hypergeometric test and the FDR is calculated using Benjamini-Hochberg (Provided by the   stringDB package).
 ```{r compute_enrichmet}
-# Set background 
+# Set background
 background <- z_score_matrix$STRING_id
 string_db$set_background(z_score_matrix$STRING_id)
-# # Compute enrichment
-# enrichment <- string_db$get_enrichment(pathway$STRING_id)
-# enrichment <- enrichment[-c(3:8)]
-# enrichment <- enrichment[enrichment$fdr<0.01,]
-# enrichment <- enrichment[enrichment$category != "Component",]
-# 
-# write.table(enrichment, file='use_case_data/tcga_data/enrichment/enrichmment_table.tsv', row.names = F, quote=FALSE, sep='\t')
-# kable(enrichment)
+# Compute enrichment
+enrichment <- string_db$get_enrichment(pathway$STRING_id)
+write.table(enrichment, file='use_case_data/tcga_data/enrichment/enrichmment_table.tsv', row.names = F, quote=FALSE, sep='\t')
+kable(enrichment)
 ```
 ## Visualize enriched terms 
 ```{r visualize_enrichment terms}
-ggplot()
+enrichment["gene_ratio"] <- enrichment$number_of_genes / nrow(pathway)
+
+# GO biological process ####
+bp <- enrichment[enrichment$category == "Process", ][1:20, ]
+bp$description <- factor(bp$description, level = bp$description[order(bp$gene_ratio)])
+bp_plot <- ggplot(bp, aes(y = description, x = gene_ratio, color = fdr)) +
+  geom_point(aes(size = number_of_genes)) +
+  scale_color_gradient(low = "#0353a4", high = "#ff8500") +
+  labs(color = "FDR", size = "Gene count", x = "Percentage from all genes in the pathway", y = "Biological process") +
+  ggtitle("Top 20 GO terms (BP)")+
+  theme_minimal()
+
+ggsave(bp_plot, file = "plots_and_figures/tcga/bp_enrichment.png")
+
+#
+bp <- enrichment[enrichment$category == "KEGG", ]
+bp$description <- factor(bp$description, level = bp$description[order(bp$gene_ratio)])
+bp_plot <- ggplot(bp, aes(y = description, x = gene_ratio, color = fdr)) +
+  geom_point(aes(size = number_of_genes)) +
+  scale_color_gradient(low = "#0353a4", high = "#ff8500") +
+  labs(color = "FDR", size = "Gene count", x = "Percentage from all genes in the pathway", y = "Biological process") +
+  ggtitle("Top 20 GO terms (BP)")+
+  theme_minimal()
+
+
+
 
 ```
+
+
+
+
 
 
 
