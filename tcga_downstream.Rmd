@@ -11,6 +11,7 @@ library("knitr")
 library("gplots")
 library("RColorBrewer")
 library("ggplot2")
+library("ggpubr")
 ```
 ## Load data
 ```{r loadData}
@@ -96,14 +97,26 @@ rctm$description <- factor(rctm$description, level = rctm$description[order(rctm
 rctm_plot <- ggplot(rctm, aes(y = description, x = gene_ratio, color = fdr)) +
   geom_point(aes(size = number_of_genes)) +
   scale_color_gradient(low = "#0353a4", high = "#ff8500") +
-  labs(color = "FDR", size = "Gene count", x = "Percentage from all genes in the pathway", y = "Biological process") +
+  labs(color = "FDR", size = "Gene count", x = "Percentage from all genes in the pathway", y = "Pathway") +
   ggtitle("Top 20 Reactome pathways")+
   theme_minimal()
-ggsave(bp_plot, file = "plots_and_figures/tcga/rctm_enrichment.png")
+ggsave(rctm_plot, file = "plots_and_figures/tcga/rctm_enrichment.png")
 
+# Reactome pathway ####
+cc <- enrichment[enrichment$category == "Component", ]
+cc$description <- factor(cc$description, level = cc$description[order(cc$gene_ratio)])
+cc_plot <- ggplot(cc, aes(y = description, x = gene_ratio, color = fdr)) +
+  geom_point(aes(size = number_of_genes)) +
+  scale_color_gradient(low = "#0353a4", high = "#ff8500") +
+  labs(color = "FDR", size = "Gene count", x = "Percentage from all genes in the pathway", y = "Component") +
+  ggtitle("Top 20 GO terms (CC)")+
+  theme_minimal()
+ggsave(cc_plot, file = "plots_and_figures/tcga/cc_enrichment.png")
 
+# Create grid ####
 
-
+grid <- ggarrange(plotlist = list(bp_plot, rctm_plot), ncol = 2, nrow = 1)
+ggsave(grid, file = "plots_and_figures/tcga/grid_enrichment.png", width = 14, height = 7)
 
 ```
 
