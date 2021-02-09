@@ -90,15 +90,17 @@ bp_plot <- ggplot(bp, aes(y = description, x = gene_ratio, color = fdr)) +
 
 ggsave(bp_plot, file = "plots_and_figures/tcga/bp_enrichment.png")
 
-#
-bp <- enrichment[enrichment$category == "KEGG", ]
-bp$description <- factor(bp$description, level = bp$description[order(bp$gene_ratio)])
-bp_plot <- ggplot(bp, aes(y = description, x = gene_ratio, color = fdr)) +
+# Reactome pathway ####
+rctm <- enrichment[enrichment$category == "RCTM", ][1:20,]
+rctm$description <- factor(rctm$description, level = rctm$description[order(rctm$gene_ratio)])
+rctm_plot <- ggplot(rctm, aes(y = description, x = gene_ratio, color = fdr)) +
   geom_point(aes(size = number_of_genes)) +
   scale_color_gradient(low = "#0353a4", high = "#ff8500") +
   labs(color = "FDR", size = "Gene count", x = "Percentage from all genes in the pathway", y = "Biological process") +
-  ggtitle("Top 20 GO terms (BP)")+
+  ggtitle("Top 20 Reactome pathways")+
   theme_minimal()
+ggsave(bp_plot, file = "plots_and_figures/tcga/rctm_enrichment.png")
+
 
 
 
