@@ -163,7 +163,7 @@ cc_terms <- names(classic_fs_cc@score[classic_fs_cc@score < 0.01])
 mf_terms <- names(classic_fs_mf@score[classic_fs_mf@score < 0.01])
 
 # Proposed GO terms from Gene ontology ###
-go <- read_gaf(filepath = "~/Downloads/sars-cov-2_targets.gaf") %>% select(GO_ID = "GO_ID", Aspect = "Aspect")
+go <- read_gaf(filepath = "use_case_data/geo_data/gaf/sars-cov-2_targets.gaf") %>% select(GO_ID = "GO_ID", Aspect = "Aspect")
 go_bp <- go[go$Aspect == "P", ]$GO_ID
 go_cc <- go[go$Aspect == "C", ]$GO_ID
 go_mf <- go[go$Aspect == "F", ]$GO_ID
@@ -179,7 +179,7 @@ myCol <- c("#347FC4","#F1A66A")
 
 futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
 # Euler BP ####
-venn.diagram(x = list(bp_terms, go_bp), category.names = c("topGO" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_bp.png',
+venn.diagram(x = list(bp_terms, go_bp), category.names = c("M-A" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_bp.png',
         # Output features
           imagetype = "png",
           height = 1200,
@@ -203,12 +203,12 @@ venn.diagram(x = list(bp_terms, go_bp), category.names = c("topGO" , "GO"), file
           cat.col = myCol, 
         # Title
           main.fontfamily = "Helvetica",
-          main = "BP GO terms related to SARS-Cov-2 vs.\n topGO terms with p-val < 0.01",
+          main = "BP GO terms related to SARS-Cov-2 vs.\n Meta-Analysis terms with p-val < 0.01",
           main.cex = 0.6)
 
 
 # Euler MF ####
-venn.diagram(x = list(mf_terms, go_mf), category.names = c("topGO" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_mf.png',
+venn.diagram(x = list(mf_terms, go_mf), category.names = c("M-A" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_mf.png',
         # Output features
           imagetype = "png",
           height = 1200,
@@ -232,12 +232,12 @@ venn.diagram(x = list(mf_terms, go_mf), category.names = c("topGO" , "GO"), file
           cat.col = myCol, 
         # Title
           main.fontfamily = "Helvetica",
-          main = "MF GO terms related to SARS-Cov-2 vs.\n topGO terms with p-val < 0.01",
+          main = "MF GO terms related to SARS-Cov-2 vs.\n Meta-Analysis terms with p-val < 0.01",
           main.cex = 0.6)
 
 
 # Euler CC ####
-venn.diagram(x = list(cc_terms, go_cc), category.names = c("topGO" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_cc.png',
+venn.diagram(x = list(cc_terms, go_cc), category.names = c("M-A" , "GO"), filename = 'plots_and_figures/geo/LFC1_P0,001/euler/euler_cc.png',
         # Output features
           imagetype = "png",
           height = 1200,
@@ -261,6 +261,6 @@ venn.diagram(x = list(cc_terms, go_cc), category.names = c("topGO" , "GO"), file
           cat.col = myCol, 
         # Title
           main.fontfamily = "Helvetica",
-          main = "CC GO terms related to SARS-Cov-2 vs.\n topGO terms with p-val < 0.01",
+          main = "CC GO terms related to SARS-Cov-2 vs.\n Meta-Analysis terms with p-val < 0.01",
           main.cex = 0.6)
 ```
