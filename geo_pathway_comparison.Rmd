@@ -30,10 +30,9 @@ visualize_result(ines_result)
 visualize_result(glone_result)
 ```
 
-
 ## Compare union networks, and top networks of every configuration for best results
 ### INES
-```{r network_comparison_ines, fig.width = 10, fig.height = 6}
+```{r network_comparison_ines, width = 10, height = 10}
 comparison_ines <- pathway_comparison_plots(ines_result)
 # Top pathway comparison ####
 top_pathway_comparison_data <- comparison_ines$top_pathway_comparison$data
@@ -44,11 +43,15 @@ selected_ines_top <- df_select
 top_pathway_comparison_plot_ines <- comparison_ines$top_pathway_comparison$plot +
   geom_encircle(data = df_select, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
   geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0) +
-  labs(caption = "Encircled configurations with avg_diff_exp > 8 and num_nodes > 5")
+  labs(title = "Top pathway comparison", subtitle = "", caption = "Encircled configurations with avg_diff_exp > 8 and num_nodes > 5") + 
+  theme(axis.title = element_text(size = 15, face="bold"),
+        plot.title = element_text(size = 25, face="bold"),
+        legend.title = element_text(size = 15, face="bold"),
+        plot.caption = element_text(size = 12))
 # Plot
 top_pathway_comparison_plot_ines
 # Save plot
-# ggsave(filename = "~/Desktop/plots/geo/LFC1_P0,001/network_comparison/top_pathway_comparison_ines.png", top_pathway_comparison_plot_ines, width = 14, height = 8)
+#ggsave(filename = "test1.png", top_pathway_comparison_plot_ines, width = 14, height = 9)
 # Union network comparison ####
 union_network_comparison_data <- comparison_ines$union_network_comparison$data
 # Select best pathways
@@ -61,11 +64,15 @@ union_network_comparison_plot_ines <- comparison_ines$union_network_comparison$p
   geom_encircle(data = df_select_2, aes(x = numNodes, y = avgDiffExp), color = "red", spread = 0.001) +
   geom_text(data = df_select, aes(label = config), hjust = -0.2, vjust = 0) +
   geom_text(data = df_select_2, aes(label = config), hjust = -0.2, vjust = 0) +
-  labs(caption = "Encircled configurations with avgDiffExp > 6 and numNodes > 6, and avgDiffExp > 6 and numNodes > 40")
+  labs(title = "Union network comparison", subtitle = "", caption = "Encircled configurations with avgDiffExp > 6 and numNodes > 6, and avgDiffExp > 6 and numNodes > 40")+
+  theme(axis.title = element_text(size = 15, face="bold"),
+        plot.title = element_text(size = 25, face="bold"),
+        legend.title = element_text(size = 15, face="bold"),
+        plot.caption = element_text(size = 12))
 # Plot
 union_network_comparison_plot_ines
 # Save plot
-# ggsave(filename = "~/Desktop/plots/geo/LFC1_P0,001/network_comparison/union_network_comparison_ines.png", union_network_comparison_plot_ines, width = 14, height = 8)
+#ggsave(filename = "test2.png", union_network_comparison_plot_ines, width = 14, height = 9)
 ```
 ### GLONE
 ```{r network_comparison_glone, fig.width = 10, fig.height = 6}

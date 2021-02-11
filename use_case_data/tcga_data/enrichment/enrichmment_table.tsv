@@ -1,39 +1,30 @@
-category	term	fdr	description
-InterPro	IPR016435	0.0087	Diphthamide synthesis DPH1/DPH2
-KEGG	map03008	0.007	Ribosome biogenesis in eukaryotes
-NetworkNeighborAL	CL.14562	0.00016	mixed, incl. preribosome, and Ribosome biogenesis
-NetworkNeighborAL	CL.9861	0.00054	triglyceride-rich lipoprotein particle remodeling, and plasma lipoprotein particle
-NetworkNeighborAL	CL.14563	0.00054	mixed, incl. preribosome, and Ribosome biogenesis
-NetworkNeighborAL	CL.9724	0.0015	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs), and plasma lipoprotein particle
-NetworkNeighborAL	CL.14567	0.0015	preribosome, and Ribosome biogenesis
-NetworkNeighborAL	CL.21608	0.0041	mixed, incl. Lon protease homologue 2, peroxisomal, and Peroxisomal/glyoxysomal leader peptide-processing protease
-NetworkNeighborAL	CL.17618	0.005	peptidyl-diphthamide biosynthetic process from peptidyl-histidine
-NetworkNeighborAL	CL.141	0.0053	mixed, incl. phosphatidylinositol-4,5-bisphosphate 3-kinase activity, and RET signaling
-NetworkNeighborAL	CL.9864	0.0054	Chylomicron remodeling, and Apolipoprotein C-I
-NetworkNeighborAL	CL.14573	0.0055	preribosome, and Ribosome biogenesis
-NetworkNeighborAL	CL.142	0.0097	mixed, incl. RET signaling, and ERBB2 Regulates Cell Motility
-Pfam	PF01866	0.0037	Putative diphthamide synthesis protein
-Process	GO.0071704	2.2e-05	organic substance metabolic process
-Process	GO.0044238	2.2e-05	primary metabolic process
-Process	GO.0043170	2.2e-05	macromolecule metabolic process
-Process	GO.0008152	2.2e-05	metabolic process
-Process	GO.0044237	4.59e-05	cellular metabolic process
-Process	GO.0006807	0.00024	nitrogen compound metabolic process
-Process	GO.2000765	0.00044	regulation of cytoplasmic translation
-Process	GO.0034660	0.00044	ncRNA metabolic process
-Process	GO.0071363	0.00093	cellular response to growth factor stimulus
-Process	GO.0034470	0.0014	ncRNA processing
-Process	GO.0042254	0.0027	ribosome biogenesis
-Process	GO.0006396	0.0032	RNA processing
-RCTM	HSA-8953854	0.0012	Metabolism of RNA
-RCTM	HSA-8868773	0.0012	rRNA processing in the nucleus and cytosol
-RCTM	HSA-5358493	0.0012	Synthesis of diphthamide-EEF2
-RCTM	HSA-6791226	0.0023	Major pathway of rRNA processing in the nucleolus and cytosol
-RCTM	HSA-5654738	0.0034	Signaling by FGFR2
-RCTM	HSA-8964041	0.0047	LDL remodeling
-RCTM	HSA-8866423	0.0056	VLDL assembly
-RCTM	HSA-8863795	0.0056	Downregulation of ERBB2 signaling
-RCTM	HSA-76071	0.0056	RNA Polymerase III Transcription Initiation From Type 3 Promoter
-RCTM	HSA-9006934	0.0088	Signaling by Receptor Tyrosine Kinases
-RCTM	HSA-8964046	0.0088	VLDL clearance
-RCTM	HSA-6783310	0.0088	Fanconi Anemia Pathway
+category	term	number_of_genes	number_of_genes_in_background	ncbiTaxonId	inputGenes	preferredNames	p_value	fdr	description
+Component	GO.0034364	2	17	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	4.51e-05	0.0045	high-density lipoprotein particle
+NetworkNeighborAL	CL.9861	2	10	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	1.75e-05	8e-04	triglyceride-rich lipoprotein particle remodeling, and plasma lipoprotein particle
+PMID	PMID.22247499	3	27	9606	9606.ENSP00000371517,9606.ENSP00000381250,9606.ENSP00000465356	AMACR,APOF,APOC1	4.42e-07	0.0042	(2012) Candidate serum biomarkers for prostate adenocarcinoma identified by mRNA differences in prostate tissue and verified with protein measurements in tissue and blood.
+PMID	PMID.31591263	2	10	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	1.75e-05	0.0349	(2019) Absolute Quantification of Apolipoproteins Following Treatment with Omega-3 Carboxylic Acids and Fenofibrate Using a High Precision Stable Isotope-Labeled Recombinant Protein Fragments Based SRM Assay.
+PMID	PMID.30347343	2	20	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	6.09e-05	0.0349	(2018) High density lipoprotein proteome is associated with cardiovascular risk factors and atherosclerosis burden as evaluated by coronary CT angiography.
+PMID	PMID.29505607	2	21	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	6.67e-05	0.0349	(2018) Myeloperoxidase mediated HDL oxidation and HDL proteome changes do not contribute to dysfunctional HDL in Chinese subjects with coronary artery disease.
+PMID	PMID.29240439	2	9	9606	9606.ENSP00000225916,9606.ENSP00000371517	KAT2A,AMACR	1.45e-05	0.0349	(2018) Defining Metabolic and Nonmetabolic Regulation of Histone Acetylation by NSAID Chemotypes.
+PMID	PMID.29115584	2	14	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	3.17e-05	0.0349	(2018) Apolipoprotein C-III in the high-density lipoprotein proteome of cerebral lacunar infarction patients impairs its anti-inflammatory function.
+PMID	PMID.28936395	2	18	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	5.01e-05	0.0349	(2017) Antioxidative activity of high-density lipoprotein (HDL): Mechanistic insights into potential clinical benefit.
+PMID	PMID.28750635	2	18	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	5.01e-05	0.0349	(2017) Proteomic analysis of human follicular fluid associated with successful in vitro fertilization.
+PMID	PMID.27640368	2	7	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	9.53e-06	0.0349	(2017) Analysis of apolipoprotein genes and their involvement in disease response of channel catfish after bacterial infection.
+PMID	PMID.27600335	2	16	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	4.04e-05	0.0349	(2016) iTRAQ-based proteomic analysis of plasma reveals abnormalities in lipid metabolism proteins in chronic kidney disease-related atherosclerosis.
+PMID	PMID.26692765	2	9	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	1.45e-05	0.0349	(2015) Low High-Density Lipoprotein and Risk of Myocardial Infarction.
+PMID	PMID.26149931	2	10	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	1.75e-05	0.0349	(2015) Amyloid-Forming Properties of Human Apolipoproteins: Sequence Analyses and Structural Insights.
+PMID	PMID.25894274	2	19	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	5.54e-05	0.0349	(2015) A comparison of the mouse and human lipoproteome: suitability of the mouse model for studies of human lipoproteins.
+PMID	PMID.25475211	2	17	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	4.51e-05	0.0349	(2015) Proteomic profiling of human sera for discovery of potential biomarkers to monitor abstinence from alcohol abuse.
+PMID	PMID.24616004	2	12	9606	9606.ENSP00000435506,9606.ENSP00000465356	POLN,APOC1	2.41e-05	0.0349	(2014) Genetic modifiers of cognitive maintenance among older adults.
+PMID	PMID.24314013	2	8	9606	9606.ENSP00000225916,9606.ENSP00000435506	KAT2A,POLN	1.19e-05	0.0349	(2013) Genetic dissection of the polyoxin building block-carbamoylpolyoxamic acid biosynthesis revealing the 'pathway redundancy' in metabolic networks.
+PMID	PMID.23522788	2	6	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	7.41e-06	0.0349	(2013) Altered relationship of plasma triglycerides to HDL cholesterol in patients with HIVHAART-associated dyslipidemia: further evidence for a unique form of metabolic syndrome in HIV patients.
+PMID	PMID.21423873	2	20	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	6.09e-05	0.0349	(2010) Apolipoproteins in the brain: implications for neurological and psychiatric disorders.
+PMID	PMID.20691829	2	6	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	7.41e-06	0.0349	(2010) Joint effects of common genetic variants from multiple genes and pathways on the risk of premature coronary artery disease.
+PMID	PMID.19345210	2	20	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	6.09e-05	0.0349	(2009) Altered expression of genes functioning in lipid homeostasis is associated with lipid deposition in NOD mouse lacrimal gland.
+PMID	PMID.19325143	2	18	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	5.01e-05	0.0349	(2009) Proteomic analysis of defined HDL subpopulations reveals particle-specific protein clusters: relevance to antioxidative function.
+PMID	PMID.18497853	2	11	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	2.06e-05	0.0349	(2008) Computational lipidology: predicting lipoprotein density profiles in human blood plasma.
+PMID	PMID.27005833	2	24	9606	9606.ENSP00000225916,9606.ENSP00000378485	KAT2A,MATK	8.56e-05	0.0351	(2016) Acetylation of CEBPAlfa inhibits its granulopoietic function.
+PMID	PMID.30473544	2	27	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	0.00011	0.0419	(2019) Plasma proteome correlates of lipid and lipoprotein: biomarkers of metabolic diversity and inflammation in children of rural Nepal.
+PMID	PMID.30948622	2	29	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	0.00012	0.0461	(2019) Analysis of 1508 Plasma Samples by Capillary-Flow Data-Independent Acquisition Profiles Proteomics of Weight Loss and Maintenance.
+PMID	PMID.28625086	2	29	9606	9606.ENSP00000292377,9606.ENSP00000465356	GPC2,APOC1	0.00012	0.0461	(2017) Hepatitis C virus-apolipoprotein interactions: molecular mechanisms and clinical impact.
+RCTM	HSA-174824	2	50	9606	9606.ENSP00000381250,9606.ENSP00000465356	APOF,APOC1	0.00035	0.0312	Plasma lipoprotein assembly, remodeling, and clearance
