@@ -1,5 +1,4 @@
-devtools::load_all("../keypathwayminer-R/")
-.jaddClassPath("../keypathwayminer-R/inst/java/keypathwayminer-standalone-5.0.jar")
+library("KeyPathwayMineR")
 # Step 1: Read saved files ####
 human_string_network <- readRDS("use_case_data/tcga_data/graphs/human_string_network_800.rds")
 counts_matrix_z_2 <- readRDS("use_case_data/tcga_data/data/counts_matrix_z_2.rds")

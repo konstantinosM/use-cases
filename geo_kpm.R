@@ -1,5 +1,4 @@
-devtools::load_all("../keypathwayminer-R/")
-.jaddClassPath("../keypathwayminer-R/inst/java/keypathwayminer-standalone-5.0.jar")
+library("KeyPathwayMineR")
 # Step 1: Read saved files ####
 human_biogrid_network <- readRDS("use_case_data/geo_data/graphs/human_biogrid_network.rds")
 counts_matrix_lfc1_p0001 <- readRDS("use_case_data/geo_data/data/indicator_matrix_lfc1_p0,001.rds")

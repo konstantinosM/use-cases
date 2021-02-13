@@ -44,18 +44,6 @@ EnhancedVolcano(incipient_samples,
                 pCutoff = pCutoff
 )
 
-
-
-
-
-
-
-
-
-
-
-
-
 # Moderate
 fold_change_moderate <- diff_exp_data$FoldChange_moderate_Alzheimer.s.disease
 pval_moderate <- diff_exp_data$PValue_moderate_Alzheimer.s.disease
@@ -63,8 +51,6 @@ pval_moderate <- diff_exp_data$PValue_moderate_Alzheimer.s.disease
 # Severe
 fold_change_severe <- diff_exp_data$FoldChange_Alzheimer.s.disease_severe
 pval_severe <- diff_exp_data$PValue_Alzheimer.s.disease_severe
-
-
 
 
 # Prepare indicator matrix
