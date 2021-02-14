@@ -8,7 +8,7 @@ output:
  
 Every use case was divided into four scripts:
 
-_data_prep.R:                Data preparation (Download OMICS data and biological network, Diff. Exp. and creation of indicator matrices)  
+_data_prep.R/.Rmd:                Data preparation (Download OMICS data and biological network, Diff. Exp. and creation of indicator matrices)  
 
 _kpm.R:                      Execute KPM on biological network and indicator matrices  
 

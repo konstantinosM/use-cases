@@ -322,6 +322,7 @@ while (j <= length(comparisons)) {
   comparisons[[j]] <- comparisons[[j]][order(row.names(comparisons[[j]])), ]
   j <- j + 1
 }
+saveRDS(ids, "use_case_data/geo_data/data/ids.rds")
 ```
 
 ## Step 3: DE-Analysis with DESeq2
@@ -347,6 +348,7 @@ saveRDS(dds_list, "use_case_data/geo_data/data/DESeq2_result_list.rds")
 
 ### Cutoffs, Volcano and DE genes
 ```{r cutoff_assesment}
+ids <- readRDS("use_case_data/geo_data/data/ids.rds")
 dds_list <- readRDS("use_case_data/geo_data/data/DESeq2_result_list.rds")
 volcanos <- list()
 # List with the differentially expressed genes of every comparison
@@ -401,16 +403,19 @@ for (i in c(1:length(volcanos))) {
                                                   names(volcanos)[i], ".png"), width = 9.5, height = 7)
 }
 # First 9 volcanos
-grid <- ggarrange(plotlist = volcanos[1:9], ncol = 3, nrow = 3)
+ grid <- ggarrange(plotlist = volcanos[1:9], ncol = 3, nrow = 3)
+pdf(file="test.pdf") # or other device
+grid
+dev.off()
 ggsave(plot = grid,
-       filename = paste0("plots_and_figures/geo/", cutoff_combination, "/volcano_plots/grid_1_9.png"), 
-       width = 30, height = 30)
+       filename = "test.png",
+       width = 15, height = 15)
 
-# Last 10 volcanos
-grid <- ggarrange(plotlist = volcanos[10:19], ncol = 3, nrow = 4)
-ggsave(plot = grid,
-       filename = paste0("plots_and_figures/geo/", cutoff_combination, "/volcano_plots/grid_10_19.png"), 
-       width = 30, height = 30)
+# # Last 10 volcanos
+# grid <- ggarrange(plotlist = volcanos[10:19], ncol = 3, nrow = 4)
+# ggsave(plot = grid,
+#        filename = paste0("plots_and_figures/geo/", cutoff_combination, "/volcano_plots/grid_10_19.png"), 
+#        width = 30, height = 30)
 ```
 
 ## Step 4: Crate indicator matrix
